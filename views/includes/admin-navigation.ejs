@@ -1,0 +1,32 @@
+<div class="backdrop"></div>
+<header class="main-header">
+  <button id="side-menu-toggle">Menu</button>
+  <nav class="main-header__nav">
+    <ul class="main-header__item-list">
+      <li class="main-header__item">
+        <a href="/">Explore</a>
+      </li>
+      <li class="main-header__item">
+        <a href="/admin/events">Events</a>
+      </li>
+      <li class="main-header__item">
+        <a href="">Registration</a>
+      </li>
+      <li class="main-header__item">
+        <a href="/admin/add-event">Add Event </a>
+      </li>
+      <li class="main-header__item">
+        <a href="/admin/add-admin">Add Admin </a>
+      </li>
+    </ul>
+    <ul class="main-header__item-list">
+      <li class="main-header__item">
+        <form action="/admin-logout" method="post">
+          <button type="submit">Logout</button>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        </form>
+      </li>
+    </ul>
+  </nav>
+</header>
+

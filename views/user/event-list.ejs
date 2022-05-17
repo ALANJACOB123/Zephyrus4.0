@@ -1,0 +1,42 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/event.css">
+    </head>
+
+    <body>
+        <%- include('../includes/user-navigation.ejs') %>
+
+            <main>
+                <% if (events.length > 0) { %>
+                    <div class="grid">
+                        <% for (let event of events) { %>
+                            <article class="card product-item">
+                                <header class="card__header">
+                                    <h1 class="product__title">
+                                        <%= event.title %>
+                                    </h1>
+                                </header>
+                                <div class="card__image">
+                                    <img src="<%= event.imageUrl %>" alt="<%= event.title %>">
+                                </div>
+                                <div class="card__content">
+                                    <h2 class="product__price">$
+                                        <%= event.price %>
+                                    </h2>
+                                    <p class="product__description">
+                                        <%= event.description %>
+                                    </p>
+                                </div>
+                                <div class="card__actions">
+                                    <a href="/events/<%= event._id %>" class="btn">Details</a>
+                                    <% if (isAuthenticated) { %>
+                                        <%- include('../includes/register.ejs', {event: event}) %>
+                                    <% } %>
+                                </div>
+                            </article>
+                            <% } %>
+                    </div>
+                    <% } else { %>
+                        <h1>No Events Found!</h1>
+                        <% } %>
+            </main>
+            <%- include('../includes/end.ejs') %>

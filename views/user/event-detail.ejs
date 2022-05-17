@@ -1,0 +1,18 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/user-navigation.ejs') %>
+        <main class="centered">
+            <h1><%= event.title %></h1>
+            <hr>
+            <div class="image">
+                <img src="<%= event.imageUrl %>" alt="<%= event.title %>">
+            </div>
+            <h2><%= event.price %></h2>
+            <p><%= event.description %></p>
+            <% if (isAuthenticated) { %>
+                <%- include('../includes/register.ejs', {event: event}) %>
+            <% } %>
+        </main>
+        <%- include('../includes/end.ejs') %>
