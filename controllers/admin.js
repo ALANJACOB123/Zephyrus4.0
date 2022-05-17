@@ -1,7 +1,9 @@
 const bcrypt = require("bcryptjs");
+const { validationResult } = require('express-validator/check');
 
 const UserAdmin = require("../models/admin-user");
 const Event = require("../models/event");
+
 
 exports.getAdminPage = (req, res, next) => {
   res.render("admin/zephyrus", {
@@ -11,48 +13,67 @@ exports.getAdminPage = (req, res, next) => {
 };
 
 exports.getNewAdmin = (req, res, next) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   res.render("admin/add-admin", {
     pageTitle: "Add Admin",
     path: "/add-admin",
+    errorMessage: message,
+    oldInput: {
+      email: '',
+      password: '',
+    },
+    validationErrors: []
   });
 };
 
 exports.postNewAdmin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  UserAdmin
-    .findOne({ email: email })
-    .then((userDoc) => {
-      if (userDoc) {
-        // req.flash(
-        //   "error",
-        //   "E-Mail exists already, please pick a different one."
-        // );
-        return res.redirect("/admin/add-admin");
-      }
-      return bcrypt
-        .hash(password, 12)
-        .then((hashedPassword) => {
-          const userAdmin = new UserAdmin({
-            email: email,
-            password: hashedPassword,
-          });
-          return userAdmin.save();
-        })
-        .then((result) => {
-          res.redirect("/admin");
-        });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+    return res.status(422).render('admin/add-admin', {
+      path: '/add-admin',
+      pageTitle: 'Add Admin',
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        email: email,
+        password: password,
+      },
+      validationErrors: errors.array()
+    });
+  }
+  bcrypt
+    .hash(password, 12)
+    .then(hashedPassword => {
+      const user = new UserAdmin({
+        email: email,
+        password: hashedPassword,
+      });
+      return user.save();
     })
-    .catch((err) => {
+    .then(result => {
+      res.redirect('/admin/add-admin');
+    })
+    .catch(err => {
       console.log(err);
     });
 };
+
 
 exports.getAddEvent = (req, res, next) => {
   res.render("admin/edit-event", {
     pageTitle: "Add Event",
     path: "/admin/add-event",
     editing: false,
+    hasError: false,
+    errorMessage: null,
+    validationErrors: []
   });
 };
 
@@ -61,6 +82,25 @@ exports.postAddEvent = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+    return res.status(422).render('admin/edit-event', {
+      pageTitle: 'Add event',
+      path: '/admin/edit-event',
+      editing: false,
+      hasError: true,
+      event: {
+        title: title,
+        imageUrl: imageUrl,
+        price: price,
+        description: description
+      },
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array()
+    });
+  }
+
   const event = new Event({
     title: title,
     price: price,
@@ -110,6 +150,9 @@ exports.getEditEvent = (req, res, next) => {
         path: "/admin/edit-event",
         editing: editMode,
         event: event,
+        hasError: false,
+        errorMessage: null,
+        validationErrors: []
       });
     })
     .catch((err) => console.log(err));
@@ -121,6 +164,27 @@ exports.postEditEvent= (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render('admin/edit-event', {
+      pageTitle: 'Edit event',
+      path: '/admin/edit-event',
+      editing: true,
+      hasError: true,
+      event: {
+        title: updatedTitle,
+        imageUrl: updatedImageUrl,
+        price: updatedPrice,
+        description: updatedDesc,
+        _id: eventId
+      },
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array()
+    });
+  }
+
 
   Event.findById(eventId)
     .then((event) => {
