@@ -2,6 +2,7 @@ const stripe = require('stripe')('sk_test_51KzxQjSJVrzWpKlz0XpAUgrf3pPSd3TmKQbHr
 
 const Event = require('../models/event');
 const Order = require('../models/order');
+const User = require("../models/user");
 
 exports.getPage = (req, res, next) => {
   res.render("user/zephyrus", {
@@ -203,6 +204,74 @@ exports.getOrders = (req, res, next) => {
       });
     })
     .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+exports.getUserProfile = (req, res, next) => {
+  User.find({ _id : req.user._id })
+    .then((user) => {
+      console.log(user);
+      if (!user) {
+        return res.redirect("/");
+      }
+      res.render("user/user-profile", {
+        pageTitle: "User Profile",
+        path: "/user-profile",
+        user: user[0],
+        // hasError: false,
+        errorMessage: null,
+        validationErrors: []
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+}
+
+exports.postUserProfile = (req, res, next) => {
+  const Name = req.body.name;
+  const email = req.body.email;
+  const clgname = req.body.clgname;
+  const dept = req.body.dept;
+  const phoneNo = req.body.phoneNo;
+  // const errors = validationResult(req);
+
+  // if (!errors.isEmpty()) {
+  //   return res.status(422).render('admin/edit-event', {
+  //     pageTitle: 'Edit event',
+  //     path: '/admin/edit-event',
+  //     editing: true,
+  //     hasError: true,
+  //     event: {
+  //       title: updatedTitle,
+  //       imageUrl: updatedImageUrl,
+  //       price: updatedPrice,
+  //       description: updatedDesc,
+  //       _id: eventId
+  //     },
+  //     errorMessage: errors.array()[0].msg,
+  //     validationErrors: errors.array()
+  //   });
+  // }
+
+
+  User.find({ _id: req.user._id })
+    .then((user) => {
+      user[0].Name = Name;
+      user[0].CollegeName = clgname;
+      user[0].Dept = dept;
+      user[0].PhoneNo = phoneNo;
+      return user[0].save().then((result) => {
+        console.log("UPDATED User Profile!");
+        res.redirect("/");
+      });
+    })
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);

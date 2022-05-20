@@ -1,0 +1,64 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/form.css">
+    <link rel="stylesheet" href="/css/event.css">
+</head>
+
+<body>
+  <%- include('../includes/user-navigation.ejs') %>
+    <main>
+        <% if (errorMessage) { %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+        <% } %>
+        <form class="product-form" action="/user-profile" method="POST">
+            <div class="form-control">
+                <label for="name">Full Name</label>
+                <input 
+                    class="<%= validationErrors.find(e => e.param === 'name') ? 'invalid' : '' %>"
+                    type="text" 
+                    name="name" 
+                    id="name" 
+                    value="<% if (user.Name) { %><%= user.Name %><% } %>">
+            </div>
+            <div class="form-control">
+                <label for="email">Email</label>
+                <input 
+                    class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>"
+                    type="email" 
+                    name="email" 
+                    id="email" 
+                    value="<%= user.email %>"
+                    readonly>
+            </div>
+            <div class="form-control">
+                <label for="clgname">College Name</label>
+                <input 
+                    class="<%= validationErrors.find(e => e.param === 'clgname') ? 'invalid' : '' %>"
+                    type="text" 
+                    name="clgname" 
+                    id="clgname" 
+                    value="<% if (user.CollegeName) { %><%= user.CollegeName %><% } %>">
+            </div>
+            <div class="form-control">
+                <label for="dept">Department</label>
+                <input 
+                    class="<%= validationErrors.find(e => e.param === 'dept') ? 'invalid' : '' %>"
+                    type="text" 
+                    name="dept" 
+                    id="dept" 
+                    value="<% if (user.Dept) { %><%= user.Dept %><% } %>">
+            </div>
+            <div class="form-control">
+                <label for="phoneNo">Phone No.</label>
+                <input 
+                    class="<%= validationErrors.find(e => e.param === 'phoneNo') ? 'invalid' : '' %>"
+                    type="text" 
+                    name="phoneNo" 
+                    id="phoneNo" 
+                    value="<% if (user.PhoneNo) { %><%= user.PhoneNo %><% } %>">
+            </div>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn" type="submit">Save Changes</button>
+        </form>
+
+    </main>
+<%- include('../includes/end.ejs') %>

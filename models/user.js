@@ -11,6 +11,22 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  Name: {
+    type: String,
+    required: false
+  },
+  CollegeName: {
+    type: String,
+    required: false
+  },
+  Dept: {
+    type: String,
+    required: false
+  },
+  PhoneNo: {
+    type: Number,
+    required: false
+  },
   password: {
     type: String,
     required: false

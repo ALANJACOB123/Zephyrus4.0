@@ -7,6 +7,10 @@ const router = express.Router();
 
 router.get("/", userController.getPage);
 
+router.get('/user-profile', isAuth.userAuth, userController.getUserProfile);
+
+router.post('/user-profile', isAuth.userAuth, userController.postUserProfile);
+
 router.get("/events",isAuth.userAuth, userController.getEvents);
 
 router.get("/events/:eventId",isAuth.userAuth, userController.getEvent);
