@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+// const GoogleStrategy = require('passport-google-oauth20').Strategy
 
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
@@ -91,7 +92,11 @@ exports.postAdminLogin = (req, res, next) => {
           res.redirect('/login');
         });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 
@@ -139,7 +144,10 @@ exports.postAdminReset = (req, res, next) => {
         });
       })
       .catch((err) => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+
       });
   });
 };
@@ -159,7 +167,9 @@ exports.getAdminNewPassword = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -188,7 +198,9 @@ exports.postAdminNewPassword = (req, res, next) => {
       res.redirect("/admin-login");
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -205,10 +217,10 @@ exports.getLogin = (req, res, next) => {
     errorMessage: message,
     oldInput: {
       email: '',
-      password: ''
+      password: '',
+      confirmPassword: ''
     },
     validationErrors: []
-
   });
 };
 
@@ -289,7 +301,43 @@ exports.postLogin = (req, res, next) => {
           res.redirect('/login');
         });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+exports.postGoogleLogin = (req, res, next) => {
+  if (req.user) {
+    User.findOne({ googleId: req.user.googleId })
+      .then((user) => {
+        if (!user) {
+          return res.status(422).render('auth/login', {
+            path: '/login',
+            pageTitle: 'Login',
+            errorMessage: 'Invalid email or password.',
+          });
+        }
+        else {
+          req.session.isLoggedIn = true;
+          req.session.user = user;
+          return req.session.save((err) => {
+            console.log(err);
+            res.redirect("/");
+          });
+        }
+      })
+      .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
+  }
+  else {
+    console.log('Hello');
+    res.redirect('/auth/google');
+  }
 };
 
 
@@ -326,9 +374,10 @@ exports.postSignup = (req, res, next) => {
       res.redirect('/login');
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
-
 };
 
 exports.postLogout = (req, res, next) => {
@@ -375,7 +424,9 @@ exports.postReset = (req, res, next) => {
         });
       })
       .catch((err) => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
       });
   });
 };
@@ -392,7 +443,9 @@ exports.getNewPassword = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -421,6 +474,9 @@ exports.postNewPassword = (req, res, next) => {
       res.redirect("/login");
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
+

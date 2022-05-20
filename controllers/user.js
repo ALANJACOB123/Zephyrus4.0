@@ -20,7 +20,9 @@ exports.getEvents = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -34,7 +36,11 @@ exports.getEvent = (req, res, next) => {
         path: "/events",
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getRegistration = (req, res, next) => {
@@ -49,7 +55,11 @@ exports.getRegistration = (req, res, next) => {
         events: events
       });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postRegistration = (req, res, next) => {
@@ -71,7 +81,11 @@ exports.postRegisterDeleteEvent = (req, res, next) => {
     .then(result => {
       res.redirect('/register');
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getCheckout = (req, res, next) => {

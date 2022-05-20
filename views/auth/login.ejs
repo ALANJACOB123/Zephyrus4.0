@@ -32,7 +32,13 @@
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button class="btn" type="submit">Login</button>
         </form>
-
+        <div class="centered">
+          <h2>or directly login with google</h2>
+        </div>
+        <form action="/google-login" method="POST" class="login-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn" type="submit">Login In with Google</button>
+        </form>
         <div class="centered">
             <a href="/reset">Reset Password</a>
         </div>

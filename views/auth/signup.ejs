@@ -41,6 +41,12 @@
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button class="btn" type="submit">Signup</button>
         </form>
+          <div class="centered">
+          <h2>or directly login with google</h2>
+            <a href="/auth/google" class="btn red darken-1">
+              <i class="fab fa-google left"></i> Log In With Google
+                </a>
+          </div>
     </main>
 
 <%- include('../includes/end.ejs') %>

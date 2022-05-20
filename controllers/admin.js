@@ -61,7 +61,9 @@ exports.postNewAdmin = (req, res, next) => {
       res.redirect('/admin/add-admin');
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -115,7 +117,9 @@ exports.postAddEvent = (req, res, next) => {
       res.redirect("/admin/events");
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -131,7 +135,11 @@ exports.getEvents = (req, res, next) => {
         path: "/admin/events",
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getEditEvent = (req, res, next) => {
@@ -155,10 +163,14 @@ exports.getEditEvent = (req, res, next) => {
         validationErrors: []
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
-exports.postEditEvent= (req, res, next) => {
+exports.postEditEvent = (req, res, next) => {
   const eventId = req.body.eventId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
@@ -200,7 +212,11 @@ exports.postEditEvent= (req, res, next) => {
         res.redirect("/admin/events");
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postDeleteEvent = (req, res, next) => {
@@ -210,5 +226,9 @@ exports.postDeleteEvent = (req, res, next) => {
       console.log("DESTROYED EVENTS");
       res.redirect("/admin/events");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };

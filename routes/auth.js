@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require('passport')
 const { check, body } = require('express-validator/check');
 
 const authController = require("../controllers/auth");
@@ -89,5 +90,48 @@ router.post("/reset", authController.postReset);
 router.get("/reset/:token", authController.getNewPassword);
 
 router.post("/new-password", authController.postNewPassword);
+
+// @desc    Auth with Google
+// @route   GET /auth/google
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
+
+// @desc    Google auth callback
+// @route   GET /auth/google/callback
+router.get(
+  '/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/signup' }),
+  (req, res) => { 
+    if(req.user){
+      User.findOne({ googleId: req.user.googleId })
+        .then((user) => {
+          if (!user) {
+            return res.status(422).render('auth/login', {
+              path: '/login',
+              pageTitle: 'Login',
+              errorMessage: 'Invalid email or password.',
+            });
+          }
+          else {
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+            return req.session.save((err) => {
+              console.log(err);
+              res.redirect("/");
+            });
+          }
+        })
+        .catch(err => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error);
+        });
+    }
+    else {
+      res.redirect('/login');
+    }
+  }
+)
+
+router.post("/google-login", authController.postGoogleLogin);
 
 module.exports = router;
