@@ -64,14 +64,14 @@ exports.getRegistration = (req, res, next) => {
 };
 
 exports.postRegistration = (req, res, next) => {
+  let f = 0;
   const eventId = req.body.eventId;
   Event.findById(eventId)
     .then(event => {
       return req.user.addToRegister(event);
     })
     .then(result => {
-      console.log(result);
-      res.redirect('/register');
+        res.redirect('/register');
     });
 };
 
@@ -141,6 +141,15 @@ exports.getCheckoutSuccess = (req, res, next) => {
       const events = user.registration.events.map(i => {
         return { quantity: i.quantity, event: { ...i.eventId._doc } };
       });
+      events.forEach(e => {
+        Event.find({ _id: e.event._id })
+          .then(event => {
+            event[0].registrations = event[0].registrations + 1;
+            event[0].save().then((result) => {
+              console.log("UPDATED EVENT!");
+            });
+          })
+      })
       const order = new Order({
         user: {
           email: req.user.email,
@@ -170,7 +179,7 @@ exports.postOrder = (req, res, next) => {
     .execPopulate()
     .then(user => {
       const events = user.registration.events.map(i => {
-        return { quantity: i.quantity, event: { ...i.eventId._doc } };
+        return {event: { ...i.eventId._doc } };
       });
       const order = new Order({
         user: {
@@ -211,9 +220,8 @@ exports.getOrders = (req, res, next) => {
 };
 
 exports.getUserProfile = (req, res, next) => {
-  User.find({ _id : req.user._id })
+  User.find({ _id: req.user._id })
     .then((user) => {
-      console.log(user);
       if (!user) {
         return res.redirect("/");
       }
@@ -221,7 +229,6 @@ exports.getUserProfile = (req, res, next) => {
         pageTitle: "User Profile",
         path: "/user-profile",
         user: user[0],
-        // hasError: false,
         errorMessage: null,
         validationErrors: []
       });

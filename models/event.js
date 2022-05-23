@@ -19,10 +19,10 @@ const eventSchema = new Schema({
     type: String,
     required: true,
   },
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: "AdminUser",
-    required: true,
+  registrations: {
+    type: Number,
+    required: false,
+    default: '0'
   },
 });
 

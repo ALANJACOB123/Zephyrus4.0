@@ -55,7 +55,7 @@ userSchema.methods.addToRegister = function (event) {
   const updatedRegisterEvents = [...this.registration.events];
 
   if (registerEventIndex >= 0) {
-    newQuantity = this.registration.events[registerEventIndex].quantity + 1;
+    newQuantity = 1;
     updatedRegisterEvents[registerEventIndex].quantity = newQuantity;
   } else {
     updatedRegisterEvents.push({
@@ -80,7 +80,7 @@ userSchema.methods.removeFromRegister = function (eventId) {
 };
 
 userSchema.methods.clearCart = function () {
-  this.cart = { events: [] };
+  this.registration = { events: [] };
   return this.save();
 };
 

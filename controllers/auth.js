@@ -335,7 +335,6 @@ exports.postGoogleLogin = (req, res, next) => {
       });
   }
   else {
-    console.log('Hello');
     res.redirect('/auth/google');
   }
 };

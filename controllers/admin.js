@@ -108,7 +108,6 @@ exports.postAddEvent = (req, res, next) => {
     price: price,
     description: description,
     imageUrl: imageUrl,
-    userId: req.session.user,
   });
   event
     .save()
@@ -124,11 +123,10 @@ exports.postAddEvent = (req, res, next) => {
 };
 
 exports.getEvents = (req, res, next) => {
-  Event.find({ userId: req.session.user._id })
+  Event.find()
     // .select('title price -_id')
     // .populate('userId', 'name')
     .then((events) => {
-      console.log(events);
       res.render("admin/event", {
         events: events,
         pageTitle: "Admin Events",
