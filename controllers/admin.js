@@ -83,15 +83,31 @@ exports.getAddEvent = (req, res, next) => {
 
 exports.postAddEvent = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  const image = req.file;
   const price = req.body.price;
   const description = req.body.description;
+  if (!image) {
+    return res.status(422).render('admin/edit-event', {
+      pageTitle: 'Add event',
+      path: '/admin/add-event',
+      editing: false,
+      hasError: true,
+      product: {
+        title: title,
+        price: price,
+        description: description
+      },
+      errorMessage: 'Attached file is not an image.',
+      validationErrors: []
+    });
+  }
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors.array());
     return res.status(422).render('admin/edit-event', {
       pageTitle: 'Add event',
-      path: '/admin/edit-event',
+      path: '/admin/add-event',
       editing: false,
       hasError: true,
       event: {
@@ -104,6 +120,8 @@ exports.postAddEvent = (req, res, next) => {
       validationErrors: errors.array()
     });
   }
+
+  const imageUrl = image.path;
 
   const event = new Event({
     title: title,
@@ -174,7 +192,7 @@ exports.postEditEvent = (req, res, next) => {
   const eventId = req.body.eventId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
-  const updatedImageUrl = req.body.imageUrl;
+  const image = req.file;
   const updatedDesc = req.body.description;
 
   const errors = validationResult(req);
@@ -187,7 +205,6 @@ exports.postEditEvent = (req, res, next) => {
       hasError: true,
       event: {
         title: updatedTitle,
-        imageUrl: updatedImageUrl,
         price: updatedPrice,
         description: updatedDesc,
         _id: eventId
@@ -206,7 +223,9 @@ exports.postEditEvent = (req, res, next) => {
       event.title = updatedTitle;
       event.price = updatedPrice;
       event.description = updatedDesc;
-      event.imageUrl = updatedImageUrl;
+      if (image) {
+        product.imageUrl = image.path;
+      }
       return event.save().then((result) => {
         console.log("UPDATED EVENT!");
         res.redirect("/admin/events");
@@ -221,7 +240,7 @@ exports.postEditEvent = (req, res, next) => {
 
 exports.postDeleteEvent = (req, res, next) => {
   const eventId = req.body.eventId;
-  Event.deleteOne({ _id: eventId, userId: req.session.user._id })
+  Event.deleteOne({ _id: eventId})
     .then(() => {
       console.log("DESTROYED EVENTS");
       res.redirect("/admin/events");

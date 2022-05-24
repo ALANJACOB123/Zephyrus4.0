@@ -45,7 +45,6 @@ router.post("/add-event", [
     .isString()
     .isLength({ min: 3 })
     .trim(),
-  body('imageUrl').isURL(),
   body('price').isFloat(),
   body('description')
     .isLength({ min: 5, max: 400 })
@@ -63,7 +62,6 @@ router.post("/edit-event", [
     .isString()
     .isLength({ min: 3 })
     .trim(),
-  body('imageUrl').isURL(),
   body('price').isFloat(),
   body('description')
     .isLength({ min: 5, max: 400 })
