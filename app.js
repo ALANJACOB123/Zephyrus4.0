@@ -51,6 +51,7 @@ app.use(morgan('dev'));
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.isAdminAuthenticated = req.session.isAdminLoggedIn;
   res.locals.csrfToken = req.csrfToken();
   next();
 });

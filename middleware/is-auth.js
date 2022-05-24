@@ -1,5 +1,5 @@
 exports.adminAuth = (req, res, next) => {
-  if (!req.session.isLoggedIn) {
+  if (!req.session.isAdminLoggedIn) {
     return res.redirect("/admin-login");
   }
   next();

@@ -73,4 +73,6 @@ router.post("/edit-event", [
 
 router.post("/delete-event", isAuth.adminAuth, adminController.postDeleteEvent);
 
+router.get("/registrations", isAuth.adminAuth, adminController.getRegistrations);
+
 module.exports = router;

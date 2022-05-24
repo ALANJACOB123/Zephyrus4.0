@@ -70,7 +70,7 @@ exports.postAdminLogin = (req, res, next) => {
         .compare(password, user.password)
         .then((doMatch) => {
           if (doMatch) {
-            req.session.isLoggedIn = true;
+            req.session.isAdminLoggedIn = true;
             req.session.user = user;
             return req.session.save((err) => {
               return res.redirect("/admin");

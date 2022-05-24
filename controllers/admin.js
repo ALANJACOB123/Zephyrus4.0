@@ -2,7 +2,9 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require('express-validator/check');
 
 const UserAdmin = require("../models/admin-user");
+const User = require("../models/user");
 const Event = require("../models/event");
+const Order = require('../models/order');
 
 
 exports.getAdminPage = (req, res, next) => {
@@ -230,3 +232,23 @@ exports.postDeleteEvent = (req, res, next) => {
       return next(error);
     });
 };
+
+exports.getRegistrations = async (req, res, next) => {
+  const docCountUser = await User.countDocuments({}).exec();
+  const docCountOrder = await Order.countDocuments({}).exec();
+  Event.find()
+    .then((events) => {
+      res.render("admin/admin-registrations", {
+        totalUsers: docCountUser,
+        totalOrders: docCountOrder,
+        events: events,
+        pageTitle: "Registrations",
+        path: "/admin/registrations",
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+}
