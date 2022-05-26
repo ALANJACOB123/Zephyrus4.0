@@ -1,4 +1,9 @@
+const fs = require('fs');
+const path = require('path');
+
 const bcrypt = require("bcryptjs");
+const { parse } = require('json2csv');
+const fileHelper = require('../util/file');
 const { validationResult } = require('express-validator/check');
 
 const UserAdmin = require("../models/admin-user");
@@ -224,6 +229,7 @@ exports.postEditEvent = (req, res, next) => {
       event.price = updatedPrice;
       event.description = updatedDesc;
       if (image) {
+        fileHelper.deleteFile(product.imageUrl);
         product.imageUrl = image.path;
       }
       return event.save().then((result) => {
@@ -240,12 +246,19 @@ exports.postEditEvent = (req, res, next) => {
 
 exports.postDeleteEvent = (req, res, next) => {
   const eventId = req.body.eventId;
-  Event.deleteOne({ _id: eventId})
-    .then(() => {
-      console.log("DESTROYED EVENTS");
-      res.redirect("/admin/events");
+  Event.findById(eventId)
+    .then(event => {
+      if (!event) {
+        return next(new Error('Event not found.'));
+      }
+      fileHelper.deleteFile(event.imageUrl);
+      return Event.deleteOne({ _id: eventId });
     })
-    .catch((err) => {
+    .then(() => {
+      console.log('DESTROYED PRODUCT');
+      res.redirect('/admin/events');
+    })
+    .catch(err => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -255,8 +268,39 @@ exports.postDeleteEvent = (req, res, next) => {
 exports.getRegistrations = async (req, res, next) => {
   const docCountUser = await User.countDocuments({}).exec();
   const docCountOrder = await Order.countDocuments({}).exec();
+  User.find().then(user => {
+    const fields = ['Name', 'email'];
+    const opts = { fields };
+    try {
+      const csv = parse(user, opts);
+      fs.writeFile('data/excel/registrations.csv', csv, function (err) {
+        if (err) throw err;
+        console.log("Write Successfully!");
+      });
+    } catch(err) {
+      console.error(err);
+    }
+  });
   Event.find()
     .then((events) => {
+      events.forEach(e => {
+        e.populate('registration.users.userId')
+          .execPopulate()
+          .then(user => {
+            const users = user.registration.users.userId;
+            const fields = ['Name', 'email'];
+            const opts = { fields };
+            try {
+              const csv = parse(users, opts);
+              fs.writeFile(`data/excel/${e.title}.csv`, csv, function (err) {
+                if (err) throw err;
+                console.log("Write Successfully!");
+              });
+            } catch (err) {
+              console.error(err);
+            }
+          })
+      })
       res.render("admin/admin-registrations", {
         totalUsers: docCountUser,
         totalOrders: docCountOrder,

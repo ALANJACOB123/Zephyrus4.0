@@ -1,3 +1,8 @@
+const fs = require('fs');
+const path = require('path');
+
+const PDFDocument = require('pdfkit');
+
 const stripe = require('stripe')('sk_test_51KzxQjSJVrzWpKlz0XpAUgrf3pPSd3TmKQbHrRTKmBUz0IPhTqdAz2NUfqBrmrnohlGVbjgA99xAcLWMWSowKcXL00HQAXe1QE');
 
 const Event = require('../models/event');
@@ -64,14 +69,18 @@ exports.getRegistration = (req, res, next) => {
 };
 
 exports.postRegistration = (req, res, next) => {
-  let f = 0;
   const eventId = req.body.eventId;
   Event.findById(eventId)
     .then(event => {
       return req.user.addToRegister(event);
     })
     .then(result => {
-        res.redirect('/register');
+      res.redirect('/register');
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -145,9 +154,7 @@ exports.getCheckoutSuccess = (req, res, next) => {
         Event.find({ _id: e.event._id })
           .then(event => {
             event[0].registrations = event[0].registrations + 1;
-            event[0].save().then((result) => {
-              console.log("UPDATED EVENT!");
-            });
+            event[0].addTheUser(user);
           })
       })
       const order = new Order({
@@ -179,7 +186,7 @@ exports.postOrder = (req, res, next) => {
     .execPopulate()
     .then(user => {
       const events = user.registration.events.map(i => {
-        return {event: { ...i.eventId._doc } };
+        return { event: { ...i.eventId._doc } };
       });
       const order = new Order({
         user: {
@@ -284,3 +291,65 @@ exports.postUserProfile = (req, res, next) => {
       return next(error);
     });
 };
+
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  Order.findById(orderId)
+    .then(order => {
+      if (!order) {
+        return next(new Error('No order found.'));
+      }
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        return next(new Error('Unauthorized'));
+      }
+      const invoiceName = 'invoice-' + orderId + '.pdf';
+      const invoicePath = path.join('data', 'invoices', invoiceName);
+      const pdfDoc = new PDFDocument();
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader(
+        'Content-Disposition',
+        'attachment; filename="' + invoiceName + '"'
+      );
+      pdfDoc.pipe(fs.createWriteStream(invoicePath));
+      pdfDoc.pipe(res);
+
+      pdfDoc.fontSize(26).text('Invoice', {
+        underline: true
+      });
+      pdfDoc.text('-----------------------');
+      let totalPrice = 0;
+      order.events.forEach(e => {
+        totalPrice += e.quantity * e.event.price;
+        pdfDoc
+          .fontSize(14)
+          .text(
+            e.event.title +
+            ' - ' +
+            e.quantity +
+            ' x ' +
+            '$' +
+            e.event.price
+          );
+      });
+      pdfDoc.text('---');
+      pdfDoc.fontSize(20).text('Total Price: $' + totalPrice);
+
+      pdfDoc.end();
+      // fs.readFile(invoicePath, (err, data) => {
+      //   if (err) {
+      //     return next(err);
+      //   }
+      //   res.setHeader('Content-Type', 'application/pdf');
+      //   res.setHeader(
+      //     'Content-Disposition',
+      //     'inline; filename="' + invoiceName + '"'
+      //   );
+      //   res.send(data);
+      // });
+      // const file = fs.createReadStream(invoicePath);
+
+      // file.pipe(res);
+    })
+    .catch(err => next(err));
+};
+

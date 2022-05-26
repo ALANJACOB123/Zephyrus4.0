@@ -279,6 +279,7 @@ exports.postLogin = (req, res, next) => {
         .then((doMatch) => {
           if (doMatch) {
             req.session.isLoggedIn = true;
+            isAdminLoggedIn = false;
             req.session.user = user;
             return req.session.save((err) => {
               console.log(err);
