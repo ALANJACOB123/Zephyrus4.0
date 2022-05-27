@@ -294,7 +294,6 @@ exports.getRegistrations = async (req, res, next) => {
               const csv = parse(users, opts);
               fs.writeFile(`data/excel/${e.title}.csv`, csv, function (err) {
                 if (err) throw err;
-                console.log("Write Successfully!");
               });
             } catch (err) {
               console.error(err);
@@ -314,4 +313,27 @@ exports.getRegistrations = async (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
+}
+
+exports.getRegistrationsDownload = (req, res, next) => {
+  const downloadPath = path.join('data', 'excel', 'registrations.csv')
+  const file = fs.createReadStream(downloadPath);
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader(
+    'Content-Disposition',
+    'attachment; filename="registrations.csv"'
+  );
+  file.pipe(res);
+}
+
+exports.getRegistrationsDownloadEvent = (req, res, next) => {
+  const eventTitle = req.params.eventTitle;
+  const downloadPath = path.join('data', 'excel', `${eventTitle}.csv`)
+  const file = fs.createReadStream(downloadPath);
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename="${eventTitle}.csv"`
+  );
+  file.pipe(res);
 }

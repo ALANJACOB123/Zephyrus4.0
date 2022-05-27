@@ -73,4 +73,8 @@ router.post("/delete-event", isAuth.adminAuth, adminController.postDeleteEvent);
 
 router.get("/registrations", isAuth.adminAuth, adminController.getRegistrations);
 
+router.get("/registrations/download", isAuth.adminAuth, adminController.getRegistrationsDownload);
+
+router.get("/registrations/:eventTitle", isAuth.adminAuth, adminController.getRegistrationsDownloadEvent);
+
 module.exports = router;
