@@ -33,6 +33,10 @@ const userSchema = new Schema({
   },
   resetToken: String,
   resetTokenExpiration: Date,
+  spotAccess: {
+    type: Boolean,
+    default: false
+  },
   registration: {
     events: [
       {

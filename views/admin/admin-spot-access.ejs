@@ -1,0 +1,38 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/form.css">
+<link rel="stylesheet" href="/css/auth.css">
+</head>
+
+<body>
+    <%- include('../includes/admin-navigation.ejs') %>
+    <main>
+      <% if (errorMessage) { %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+        <% } %>
+      <form class="login-form" action="/admin/spot-access" method="post">
+        <div class="form-control">
+                <label for="email">E-Mail</label>
+                <input 
+                    class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>"
+                    type="email" 
+                    name="email" 
+                    id="email" 
+                    value="<%= oldInput.email %>">
+            </div>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn" type="submit">Search</button>
+      </form>
+      <% if (email) { %>
+            <h1><%= email %></h1>
+            <form class="login-form" action="/admin/give-access" method="post">
+        <div class="form-control">
+                <input type="checkbox" id="spot-access" name="spotAccess" value="true">
+                <label for="spot-access">Spot Access</label><br><br>
+            </div>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="email" value="<%= email %>">
+            <button class="btn" type="submit">Give Access</button>
+        <% } %>
+    </main>
+    
+<%- include('../includes/end.ejs') %>

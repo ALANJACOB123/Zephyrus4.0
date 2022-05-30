@@ -337,3 +337,86 @@ exports.getRegistrationsDownloadEvent = (req, res, next) => {
   );
   file.pipe(res);
 }
+
+exports.getSpotAccess = (req, res, next) => {
+  let message = req.flash('error');
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  res.render("admin/admin-spot-access", {
+    pageTitle: "Spot Access",
+    path: "/admin/spot-access",
+    errorMessage: message,
+    email: undefined,
+    oldInput: {
+      email: '',
+    },
+    validationErrors: []
+  });
+};
+
+exports.postSpotAccess = (req, res, next) => {
+  const email = req.body.email;
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        return res.status(422).render('admin/admin-spot-access', {
+          path: '/admin/spot-access',
+          pageTitle: 'Spot Access',
+          errorMessage: 'Invalid email',
+          oldInput: {
+            email: email,
+          },
+          validationErrors: []
+        });
+      }
+      else {
+        return res.render("admin/admin-spot-access", {
+          pageTitle: "Spot Access",
+          path: "/admin/spot-access",
+          email: user.email,
+          errorMessage: undefined,
+          oldInput: {
+            email: '',
+          },
+          validationErrors: []
+        });
+      }
+    })
+};
+
+exports.postgiveAccess = (req, res, next) => {
+  const spotAccess = req.body.spotAccess;
+  const email = req.body.email;
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        return res.status(422).render('admin/admin-spot-access', {
+          path: '/admin/spot-access',
+          pageTitle: 'Spot Access',
+          errorMessage: 'Invalid email',
+          oldInput: {
+            email: email,
+          },
+          validationErrors: []
+        });
+      }
+      else {
+        user.spotAccess = spotAccess;
+        user.save().then(result => {
+          return res.render("admin/admin-spot-access", {
+            pageTitle: "Spot Access",
+            path: "/admin/spot-access",
+            email: user.email,
+            errorMessage: undefined,
+            oldInput: {
+              email: '',
+            },
+            validationErrors: []
+          });
+        })
+      }
+    })
+};

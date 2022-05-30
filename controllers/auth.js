@@ -220,7 +220,8 @@ exports.getLogin = (req, res, next) => {
       password: '',
       confirmPassword: ''
     },
-    validationErrors: []
+    validationErrors: [],
+    spotAccess: false
   });
 };
 
@@ -240,7 +241,8 @@ exports.getSignup = (req, res, next) => {
       password: '',
       confirmPassword: ''
     },
-    validationErrors: []
+    validationErrors: [],
+    spotAccess: false
   });
 };
 
@@ -391,6 +393,7 @@ exports.getReset = (req, res, next) => {
   res.render("auth/reset", {
     path: "/reset",
     pageTitle: "Reset Password",
+    spotAccess: false
   });
 };
 

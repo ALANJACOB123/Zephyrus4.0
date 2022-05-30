@@ -18,6 +18,11 @@
       <li class="main-header__item">
         <a href="/orders">Your registrations</a>
       </li>
+      <% if (spotAccess) { %>
+      <li class="main-header__item">
+        <a href="/spot-registration">Spot registration</a>
+      </li>
+        <% } %>
     </ul>
     <ul class="main-header__item-list">
       <% if (!isAuthenticated) { %>

@@ -33,4 +33,6 @@ router.get('/orders', isAuth.userAuth, userController.getOrders);
 
 router.get('/orders/:orderId', isAuth.userAuth, userController.getInvoice);
 
+router.get('/spot-registration', isAuth.userAuth, userController.getSpotRegistrationsPage);
+
 module.exports = router;

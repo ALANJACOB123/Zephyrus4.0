@@ -7,7 +7,7 @@
         <main>
             <% if (events.length > 0) { %>
                 <ul class="cart__item-list">
-                    <% events.forEach(e => { %>
+                    <% events.forEach(e => {console.log(e) %>
                         <li class="cart__item">
                             <h1><%= e.eventId.title %></h1>
                             <form action="/register-delete-event" method="POST">

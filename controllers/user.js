@@ -10,10 +10,20 @@ const Order = require('../models/order');
 const User = require("../models/user");
 
 exports.getPage = (req, res, next) => {
-  res.render("user/zephyrus", {
-    pageTitle: "Zephyrus 4.0",
-    path: "/",
-  });
+  if(req.user) {
+    res.render("user/zephyrus", {
+      pageTitle: "Zephyrus 4.0",
+      path: "/",
+      spotAccess : req.user.spotAccess
+    });
+  }
+  else {
+    res.render("user/zephyrus", {
+      pageTitle: "Zephyrus 4.0",
+      path: "/",
+      spotAccess: false
+    });
+  }
 };
 
 exports.getEvents = (req, res, next) => {
@@ -23,6 +33,7 @@ exports.getEvents = (req, res, next) => {
         events: events,
         pageTitle: "All Events",
         path: "/events",
+        spotAccess: req.user.spotAccess
       });
     })
     .catch((err) => {
@@ -40,6 +51,7 @@ exports.getEvent = (req, res, next) => {
         event: event,
         pageTitle: event.title,
         path: "/events",
+        spotAccess: req.user.spotAccess
       });
     })
     .catch((err) => {
@@ -58,7 +70,8 @@ exports.getRegistration = (req, res, next) => {
       res.render('user/registration', {
         path: '/register',
         pageTitle: 'Your Events',
-        events: events
+        events: events,
+        spotAccess: req.user.spotAccess,
       });
     })
     .catch(err => {
@@ -130,6 +143,7 @@ exports.getCheckout = (req, res, next) => {
       res.render('user/checkout', {
         path: '/checkout',
         pageTitle: 'Checkout',
+        spotAccess: req.user.spotAccess,
         events: events,
         totalSum: total,
         sessionId: session.id
@@ -216,7 +230,8 @@ exports.getOrders = (req, res, next) => {
       res.render('user/orders', {
         path: '/orders',
         pageTitle: 'Your Orders',
-        orders: orders
+        orders: orders,
+        spotAccess: req.user.spotAccess
       });
     })
     .catch(err => {
@@ -237,6 +252,7 @@ exports.getUserProfile = (req, res, next) => {
         path: "/user-profile",
         user: user[0],
         errorMessage: null,
+        spotAccess: req.user.spotAccess,
         validationErrors: []
       });
     })
@@ -353,3 +369,10 @@ exports.getInvoice = (req, res, next) => {
     .catch(err => next(err));
 };
 
+exports.getSpotRegistrationsPage = (req, res, next) => {
+  res.render("user/spot-registration", {
+    pageTitle: "Spot Registration",
+    path: "/spot-registration",
+    spotAccess: req.user.spotAccess
+  });
+};
