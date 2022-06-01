@@ -112,8 +112,14 @@ router.get(
             });
           }
           else {
+            console.log(user);
+            if(user.spotAccess) {
+              req.session.spotAccess = true;
+              req.session.save();
+            }
             req.session.isLoggedIn = true;
             req.session.user = user;
+            req.session.userImage = user.image;
             return req.session.save((err) => {
               console.log(err);
               res.redirect("/");

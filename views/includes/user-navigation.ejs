@@ -1,46 +1,111 @@
-<div class="backdrop"></div>
-<header class="main-header">
-  <button id="side-menu-toggle">Menu</button>
-  <nav class="main-header__nav">
-    <ul class="main-header__item-list">
-      <li class="main-header__item">
-        <a href="/">Explore</a>
-      </li>
-      <li class="main-header__item">
-        <a href="/events">Events</a>
-      </li>
-      <li class="main-header__item">
-        <a href="/register">Register</a>
-      </li>
-      <li class="main-header__item">
-        <a href="/user-profile">Your Profile</a>
-      </li>
-      <li class="main-header__item">
-        <a href="/orders">Your registrations</a>
-      </li>
-      <% if (spotAccess) { %>
-      <li class="main-header__item">
-        <a href="/spot-registration">Spot registration</a>
-      </li>
+<!-- header  -->
+<header id="home">
+  <!-- navbar -->
+  <nav class="navbar">
+    <div class="nav-center">
+      <!-- nav header -->
+      <div class="nav-header">
+        <img src="./images/logo.svg" class="nav-logo" alt="1" />
+        <button type="button" class="nav-toggle" id="nav-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <!-- end of nav header -->
+      <!-- nav links -->
+      <ul class="nav-links" id="nav-links">
+        <!-- single link -->
+        <li>
+          <a
+            class="<%= path === '/' ? 'active' : '' %> nav-link srcoll-link"
+            href="/"
+            >Explore</a
+          >
+        </li>
+        <!-- end of single link -->
+        <li>
+          <a
+            class="<%= path === '/events' ? 'active' : '' %> nav-link srcoll-link"
+            href="/events"
+            >Events</a
+          >
+        </li>
+        <!-- end of single link -->
+        <!-- single link -->
+        <li>
+          <a
+            class="<%= path === '/register' ? 'active' : '' %> nav-link srcoll-link"
+            href="/register"
+            >Register</a
+          >
+        </li>
+        <!-- end of single link -->
+        <!-- single link -->
+        <% if (spotAccess) { %>
+        <li class="main-header__item">
+          <a
+            class="<%= path === '/spot-registration' ? 'active' : '' %> nav-link srcoll-link"
+            href="/spot-registration"
+            >Spot registration</a
+          >
+        </li>
         <% } %>
-    </ul>
-    <ul class="main-header__item-list">
-      <% if (!isAuthenticated) { %>
-      <li class="main-header__item">
-        <a class="<%= path === '/login' ? 'active' : '' %>" href="/login"
-          >Login</a
-        >
-      </li>
-      <% } else { %>
-      <li class="main-header__item">
-        <form action="/logout" method="post">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-          <button type="submit">Logout</button>
-        </form>
-      </li>
-      <% } %>
-    </ul>
+        <!-- end of single link -->
+        <!-- single link -->
+      </ul>
+      <!-- end of nav links -->
+      <!-- nav icons -->
+      <ul class="nav-links" id="nav-links2">
+        <!-- single link -->
+        <% if (!isAuthenticated) { %>
+        <li>
+          <a class="<%= path === '/login' ? 'active' : '' %> btn" href="/login"
+            >Login</a
+          >
+        </li>
+        <% } else { %>
+        <div class="dropdown">
+          <button class="dropbtn">
+            <% if (userImage) { %>
+            <img class="user-img" src="<%= userImage %>" alt="1" />
+            <% } else { %>
+            <h4 class="center">Welcome</h4>
+            <% } %>
+            <i class="fa fa-caret-down icon"></i>
+          </button>
+          <div class="dropdown-content">
+            <ul>
+              <li>
+                <form action="/logout" method="post">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  <button class="btn" type="submit">Logout</button>
+                </form>
+              </li>
+              <!-- single link -->
+              <li>
+                <a
+                  class="<%= path === '/user-profile' ? 'active' : '' %> nav-link srcoll-link"
+                  href="/user-profile"
+                  >Your Profile</a
+                >
+              </li>
+              <!-- end of single link -->
+              <!-- single link -->
+              <li>
+                <a
+                  class="<%= path === '/orders' ? 'active' : '' %> nav-link srcoll-link"
+                  href="/orders"
+                  >Your registrations</a
+                >
+              </li>
+              <!-- end of single link -->
+            </ul>
+          </div>
+        </div>
+        <% } %>
+        <!-- end of single link -->
+      </ul>
+      <!-- end of footer icons -->
+    </div>
   </nav>
 </header>
-
-
+<!-- end of header  -->

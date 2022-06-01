@@ -221,7 +221,6 @@ exports.getLogin = (req, res, next) => {
       confirmPassword: ''
     },
     validationErrors: [],
-    spotAccess: false
   });
 };
 
@@ -242,7 +241,6 @@ exports.getSignup = (req, res, next) => {
       confirmPassword: ''
     },
     validationErrors: [],
-    spotAccess: false
   });
 };
 
@@ -280,6 +278,10 @@ exports.postLogin = (req, res, next) => {
         .compare(password, user.password)
         .then((doMatch) => {
           if (doMatch) {
+            if (user.spotAccess) {
+              req.session.spotAccess = true;
+              req.session.save();
+            }
             req.session.isLoggedIn = true;
             isAdminLoggedIn = false;
             req.session.user = user;
@@ -323,6 +325,7 @@ exports.postGoogleLogin = (req, res, next) => {
           });
         }
         else {
+          console.log(req.user);
           req.session.isLoggedIn = true;
           req.session.user = user;
           return req.session.save((err) => {

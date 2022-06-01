@@ -15,6 +15,10 @@ const userSchema = new Schema({
     type: String,
     required: false
   },
+  image: {
+    type: String,
+    required: false
+  },
   CollegeName: {
     type: String,
     required: false

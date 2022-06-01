@@ -366,6 +366,7 @@ exports.postSpotAccess = (req, res, next) => {
           path: '/admin/spot-access',
           pageTitle: 'Spot Access',
           errorMessage: 'Invalid email',
+          email: undefined,
           oldInput: {
             email: email,
           },
@@ -404,6 +405,8 @@ exports.postgiveAccess = (req, res, next) => {
         });
       }
       else {
+        req.session.spotAccess = true;
+        req.session.save();
         user.spotAccess = spotAccess;
         user.save().then(result => {
           return res.render("admin/admin-spot-access", {

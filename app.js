@@ -77,6 +77,8 @@ app.use(morgan('dev'));
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.isAdminAuthenticated = req.session.isAdminLoggedIn;
+  res.locals.spotAccess = req.session.spotAccess;
+  res.locals.userImage = req.session.userImage;
   res.locals.csrfToken = req.csrfToken();
   next();
 });
