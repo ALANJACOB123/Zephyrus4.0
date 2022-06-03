@@ -112,7 +112,6 @@ router.get(
             });
           }
           else {
-            console.log(user);
             if(user.spotAccess) {
               req.session.spotAccess = true;
               req.session.save();

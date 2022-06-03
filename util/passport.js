@@ -11,7 +11,6 @@ module.exports = function (passport) {
         callbackURL: '/auth/google/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
-        console.log(profile._json.picture);
         const newUser = {
           googleId: profile.id,
           email: profile.emails[0].value,
