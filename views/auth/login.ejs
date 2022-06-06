@@ -20,54 +20,14 @@
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
+  <link rel="stylesheet" href="/css/form.css">
 <!--===============================================================================================-->
-
-    <link rel="stylesheet" href="/css/form.css">
-    <link rel="stylesheet" href="/css/auth.css">
 </head>
 
 <body>
    <%- include('../includes/user-navigation.ejs') %>
 
     <main class="section relative">
-        <!-- <% if (errorMessage) { %>
-            <div class="user-message user-message--error"><%= errorMessage %></div>
-        <% } %> -->
-        <!-- <form class="login-form" action="/login" method="POST">
-            <div class="form-control">
-                <label for="email">E-Mail</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>"
-                    type="email" 
-                    name="email" 
-                    id="email" 
-                    value="<%= oldInput.email %>">
-            </div>
-            <div class="form-control">
-                <label for="password">Password</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>"
-                    type="password" 
-                    name="password" 
-                    id="password" 
-                    value="<%= oldInput.password %>">
-            </div>
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button class="btn" type="submit">Login</button>
-        </form>
-        <div class="centered">
-          <h2>or directly login with google</h2>
-        </div>
-        <form action="/google-login" method="POST" class="login-form">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button class="btn" type="submit">Login In with Google</button>
-        </form>
-        <div class="centered">
-            <a href="/reset">Reset Password</a>
-        </div>
-        <div class="centered">
-          <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
-        </div> -->
         <div class="limiter">
 		<div class="container-login100" style="background-image: url('img/bg-01.jpg');">
 			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
@@ -135,7 +95,8 @@
 
 	<div id="dropDownSelect1"></div>
 	
-<!--===============================================================================================-->
+    </main>
+    <!--===============================================================================================-->
 	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->
 	<script src="vendor/animsition/js/animsition.min.js"></script>
@@ -150,6 +111,4 @@
 <!--===============================================================================================-->
 	<script src="vendor/countdowntime/countdowntime.js"></script>
 <!--===============================================================================================-->
-
-    </main>
 <%- include('../includes/end.ejs') %>
