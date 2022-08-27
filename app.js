@@ -17,8 +17,7 @@ const errorController = require('./controllers/error');
 const User = require('./models/user');
 const adminUser = require('./models/admin-user');
 
-const MONGODB_URI =
-  "mongodb+srv://alanjacob:Alanandg123@cluster0.7opvu.mongodb.net/Zephyrus";
+const MONGODB_URI ="mongodb+srv://alanjacob:Alanandg123@cluster0.7opvu.mongodb.net/Zephyrus";
 
 const app = express();
 const store = new MongoDBStore({
