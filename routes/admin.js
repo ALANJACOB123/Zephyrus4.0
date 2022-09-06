@@ -14,15 +14,16 @@ router.post("/add-admin", [
   check('email')
     .isEmail()
     .withMessage('Please enter a valid email.')
-    .custom((value, { req }) => {
-      return User.findOne({ email: value }).then(userDoc => {
-        if (userDoc) {
-          return Promise.reject(
-            'E-Mail exists already, please pick a different one.'
-          );
-        }
-      });
-    })
+    // .custom((value, { req }) => {
+    //   console.log(value);
+    //   return User.findOne({ email: value }).then(userDoc => {
+    //     if (userDoc) {
+    //       return Promise.reject(
+    //         'E-Mail exists already, please pick a different one.'
+    //       );
+    //     }
+    //   });
+    // })
     .normalizeEmail(),
   body(
     'password',
