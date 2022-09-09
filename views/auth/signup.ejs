@@ -1,163 +1,51 @@
 <%- include('../includes/head.ejs') %>
-<!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="css/util.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
-  <link rel="stylesheet" href="/css/form.css">
-<!--===============================================================================================-->
 </head>
 
 <body>
    <%- include('../includes/user-navigation.ejs') %>
-
-    <!-- <main class="section"> -->
-        <!-- <% if (errorMessage) { %>
-            <div class="user-message user-message--error"><%= errorMessage %></div>
-        <% } %>
-        <form class="login-form" action="/signup" method="POST" novalidate>
-            <div class="form-control">
-                <label for="email">E-Mail</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>"
-                    type="email" 
-                    name="email" 
-                    id="email" 
-                    value="<%= oldInput.email %>">
+	<% if (errorMessage) { %>
+		<div class="user-message user-message--error" id="msg"><%= errorMessage %></div>
+	  <% } %>
+	<section class="py-5">
+        <div class="container py-5">
+            <div class="row mb-4 mb-lg-5">
+                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                    <p class="fw-bold text-success mb-2" style="font-size: 40px;color: rgb(25, 245, 170);">Sign Up</p>
+                    <h2 class="fw-bold" style="font-size: 15px;">Already have an account?<a href="#" style="margin-left: 5px;color: rgb(25, 245, 170);">Login</a>&nbsp;</h2>
+                </div>
             </div>
-            <div class="form-control">
-                <label for="password">Password</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>"
-                    type="password" 
-                    name="password" 
-                    id="password" 
-                    value="<%= oldInput.password %>">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-6 col-xl-4">
+                    <div class="card">
+                        <div class="card-body text-center d-flex flex-column align-items-center" style="margin-top: -28px;">
+                            <form action="/signup" method="post">
+                                <div class="mb-3">
+									<input class="form-control <%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>" type="email" name="email" value="<%= oldInput.email %>" placeholder="Email">
+								</div>
+                                <div class="mb-3">
+									<input class="form-control <%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>" type="password" name="password" value="<%= oldInput.password %>" placeholder="Password">
+								</div>
+                                <div class="mb-3">
+									<input class="form-control <%= validationErrors.find(e => e.param === 'confirmPassword') ? 'invalid' : '' %>" type="password" name="confirmpassoword" value="<%= oldInput.confirmPassword %>" placeholder="Confirm Password">
+								</div>
+								<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <div class="mb-3">
+									<button class="btn btn-primary shadow d-block w-100" type="submit">Log in</button>
+								</div>
+                            </form>
+							<br>
+							<p>OR</p>
+                            <p>Sign In With&nbsp;<span style="color: rgb(25, 245, 170);">Google</span></p>
+							<form action="/google-login" method="POST">
+								<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+								<button class="btn btn-primary" type="submit" style="font-size: 16px;width: 60px;height: 60px;border-radius: 50%;padding: 0px;">&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-google" style="font-size: 24px;">
+									<path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z"></path>
+									</svg>&nbsp;</button>
+							</form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-control">
-                <label for="confirmPassword">Confirm Password</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'confirmPassword') ? 'invalid' : '' %>"
-                    type="password" 
-                    name="confirmPassword" 
-                    id="confirmPassword" 
-                    value="<%= oldInput.confirmPassword %>">
-            </div>
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button class="btn" type="submit">Signup</button>
-        </form>
-          <div class="centered">
-          <h2>or directly login with google</h2>
-            <a href="/auth/google" class="btn red darken-1">
-              <i class="fab fa-google left"></i> Log In With Google
-                </a>
-          </div>
-    </main> -->
-    <main class="section relative">
-        <div class="limiter">
-		<div class="container-login100" style="background-image: url('img/bg-01.jpg');">
-			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
-				<form class="login100-form validate-form" action="/signup" method="POST">
-          <% if (errorMessage) { %>
-            <div class="user-message user-message--error" id="msg"><%= errorMessage %></div>
-          <% } %>
-					<span class="login100-form-title p-b-49">
-						Sign Up
-					</span>
-
-					<div class="wrap-input100 validate-input m-b-23" data-validate = "E-mail is reauired">
-						<span class="label-input100">E-Mail</span>
-						<input class="input100 <%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>" type="email" name="email" value="<%= oldInput.email %>" placeholder="Type your email">
-						<span class="focus-input100" data-symbol="&#xf206;"></span>
-					</div>
-
-					<div class="wrap-input100 validate-input m-b-23" data-validate="Password is required">
-						<span class="label-input100">Password</span>
-						<input class="input100 <%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>" type="password" name="password" value="<%= oldInput.password %>" placeholder="Type your password">
-						<span class="focus-input100" data-symbol="&#xf190;"></span>
-					</div>
-
-          <div class="wrap-input100 validate-input" data-validate="Confirm Password is required">
-						<span class="label-input100">Confirm Password</span>
-						<input class="input100 <%= validationErrors.find(e => e.param === 'confirmPassword') ? 'invalid' : '' %>" type="password" name="confirmPassword" value="<%= oldInput.confirmPassword %>" placeholder="Confirm password">
-						<span class="focus-input100" data-symbol="&#xf190;"></span>
-					</div>
-					
-					<div class="text-right p-t-8 p-b-31">
-						<a href="/reset">
-							Forgot password?
-						</a>
-					</div>
-					
-					<div class="container-login100-form-btn">
-						<div class="wrap-login100-form-btn">
-							<div class="login100-form-bgbtn"></div>
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-							<button class="login100-form-btn">
-								Sign Up
-							</button>
-						</div>
-					</div>
-				</form>
-					<div class="txt1 text-center p-t-54 p-b-20">
-						<span>
-							Or Sign Up Using
-						</span>
-					</div>
-					<div class="flex-c-m">
-            <form action="/google-login" method="POST">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <button class="login100-social-item bg3" type="submit"><i class="fa fa-google"></i></button>
-            </form>
-					</div>
-
-					<div class="flex-col-c p-t-80">
-						<span class="txt1 p-b-17">
-							Or Login In Using
-						</span>
-
-						<a href="/login" class="txt2">
-							Login In
-						</a>
-					</div>
-			</div>
-		</div>
-	</div>
-	
-
-	<div id="dropDownSelect1"></div>
-	
-    </main>
-    <!--===============================================================================================-->
-	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/animsition/js/animsition.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/bootstrap/js/popper.js"></script>
-	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/select2/select2.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/daterangepicker/moment.min.js"></script>
-	<script src="vendor/daterangepicker/daterangepicker.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/countdowntime/countdowntime.js"></script>
-<!--===============================================================================================-->
-
+        </div>
+    </section>
 <%- include('../includes/end.ejs') %>
