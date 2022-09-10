@@ -39,11 +39,13 @@ exports.getNewAdmin = (req, res, next) => {
 };
 
 exports.postNewAdmin = (req, res, next) => {
-  const email = req.body.email;
+  let email = req.body.email;
+  if(email === '@'){
+    email = '';
+  }
   const password = req.body.password;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors.array());
     return res.status(422).render('admin/add-admin', {
       path: '/add-admin',
       pageTitle: 'Add Admin',
@@ -92,12 +94,12 @@ exports.postAddEvent = (req, res, next) => {
   const price = req.body.price;
   const description = req.body.description;
   if (!image) {
-    return res.status(422).render('admin/edit-event', {
+      return res.status(422).render('admin/edit-event', {
       pageTitle: 'Add event',
       path: '/admin/add-event',
       editing: false,
       hasError: true,
-      product: {
+      event: {
         title: title,
         price: price,
         description: description
@@ -109,7 +111,6 @@ exports.postAddEvent = (req, res, next) => {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors.array());
     return res.status(422).render('admin/edit-event', {
       pageTitle: 'Add event',
       path: '/admin/add-event',
@@ -287,7 +288,7 @@ exports.getRegistrations = async (req, res, next) => {
         e.populate('registration.users.userId')
           .execPopulate()
           .then(user => {
-            const users = user.registration.users.userId;
+            const users = user.registration.users[0].userId;
             const fields = ['Name', 'email'];
             const opts = { fields };
             try {

@@ -36,12 +36,15 @@ exports.getAdminLogin = (req, res, next) => {
 };
 
 exports.postAdminLogin = (req, res, next) => {
-  const email = req.body.email;
+  let email = req.body.email;
+  if(email === '@'){
+    email = '';
+  }
   const password = req.body.password;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render('admin/admin-zephyrus', {
-      path: '/admin',
+      path: '/admin-login',
       pageTitle: 'Admin-Login',
       errorMessage: errors.array()[0].msg,
       oldInput: {
@@ -55,7 +58,7 @@ exports.postAdminLogin = (req, res, next) => {
     .then((user) => {
       if (!user) {
         return res.status(422).render('admin/admin-zephyrus', {
-          path: '/admin',
+          path: '/admin-login',
           pageTitle: 'Admin-Login',
           errorMessage: 'Invalid email or password.',
           oldInput: {
@@ -77,7 +80,7 @@ exports.postAdminLogin = (req, res, next) => {
             });
           }
           return res.status(422).render('admin/admin-zephyrus', {
-            path: '/admin',
+            path: '/admin-login',
             pageTitle: 'Admin-Login',
             errorMessage: 'Invalid email or password.',
             oldInput: {
@@ -89,7 +92,7 @@ exports.postAdminLogin = (req, res, next) => {
         })
         .catch(err => {
           console.log(err);
-          res.redirect('/login');
+          res.redirect('/admin-login');
         });
     })
     .catch(err => {
@@ -290,7 +293,14 @@ exports.postLogin = (req, res, next) => {
             req.session.user = user;
             return req.session.save((err) => {
               console.log(err);
-              res.redirect("/");
+              if(user.Name !== '' && user.CollegeName !== '' && user.Dept !== '' && user.PhoneNo !== '')
+              {
+                res.redirect("/");
+              }
+              else
+              {
+                res.redirect("/user-profile");
+              }
             });
           }
           return res.status(422).render('auth/login', {
@@ -328,12 +338,11 @@ exports.postGoogleLogin = (req, res, next) => {
           });
         }
         else {
-          console.log(req.user);
           req.session.isLoggedIn = true;
           req.session.user = user;
           return req.session.save((err) => {
             console.log(err);
-            res.redirect("/");
+            res.redirect("/user-profile");
           });
         }
       })
@@ -358,7 +367,6 @@ exports.postSignup = (req, res, next) => {
   const confirmPassword = req.body.confirmPassword;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors.array());
     return res.status(422).render('auth/signup', {
       path: '/signup',
       pageTitle: 'Signup',

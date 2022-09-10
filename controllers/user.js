@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PDFDocument = require('pdfkit');
+const { validationResult } = require('express-validator/check');
 
 const stripe = require('stripe')('sk_test_51KzxQjSJVrzWpKlz0XpAUgrf3pPSd3TmKQbHrRTKmBUz0IPhTqdAz2NUfqBrmrnohlGVbjgA99xAcLWMWSowKcXL00HQAXe1QE');
 
@@ -235,6 +236,12 @@ exports.getUserProfile = (req, res, next) => {
       res.render("user/user-profile", {
         pageTitle: "User Profile",
         path: "/user-profile",
+        oldInput: {
+          name: undefined,
+          clgname: undefined,
+          dept: undefined,
+          phoneNo: undefined
+        },
         user: user[0],
         errorMessage: null,
         validationErrors: []
@@ -253,27 +260,30 @@ exports.postUserProfile = (req, res, next) => {
   const clgname = req.body.clgname;
   const dept = req.body.dept;
   const phoneNo = req.body.phoneNo;
-  // const errors = validationResult(req);
-
-  // if (!errors.isEmpty()) {
-  //   return res.status(422).render('admin/edit-event', {
-  //     pageTitle: 'Edit event',
-  //     path: '/admin/edit-event',
-  //     editing: true,
-  //     hasError: true,
-  //     event: {
-  //       title: updatedTitle,
-  //       imageUrl: updatedImageUrl,
-  //       price: updatedPrice,
-  //       description: updatedDesc,
-  //       _id: eventId
-  //     },
-  //     errorMessage: errors.array()[0].msg,
-  //     validationErrors: errors.array()
-  //   });
-  // }
-
-
+  const errors = validationResult(req);
+  console.log(errors.array());
+  if (!errors.isEmpty()) {
+    return res.status(422).render('user/user-profile', {
+      pageTitle: 'User Profile',
+      path: '/user-profile',
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        name: Name,
+        email: email,
+        clgname: clgname,
+        dept: dept,
+        phoneNo: phoneNo
+      },
+      user: {
+        name: undefined,
+        clgname: undefined,
+        email: undefined,
+        dept: undefined,
+        phoneNo: undefined
+      },
+      validationErrors: errors.array()
+    });
+  }
   User.find({ _id: req.user._id })
     .then((user) => {
       user[0].Name = Name;

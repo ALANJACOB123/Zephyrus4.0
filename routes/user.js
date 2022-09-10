@@ -1,4 +1,5 @@
 const express = require("express");
+const { check, body } = require('express-validator/check');
 
 const isAuth = require("../middleware/is-auth");
 const userController = require("../controllers/user");
@@ -9,7 +10,15 @@ router.get("/", userController.getPage);
 
 router.get('/user-profile', isAuth.userAuth, userController.getUserProfile);
 
-router.post('/user-profile', isAuth.userAuth, userController.postUserProfile);
+router.post('/user-profile',[
+    check('name').not().isEmpty().withMessage('Please Enter a valid Name'),
+    check('clgname').not().isEmpty().withMessage('Please Enter a valid College Name'),
+    check('dept').not().isEmpty().withMessage('Please Enter a valid Department Name'),
+    body('phoneNo', 'Please Enter a valid Phone Number')
+      .exists()
+      .isMobilePhone()
+      .trim(),
+  ], isAuth.userAuth, userController.postUserProfile);
 
 router.get("/events",isAuth.userAuth, userController.getEvents);
 

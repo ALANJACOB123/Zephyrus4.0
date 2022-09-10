@@ -3,15 +3,19 @@
 
 <body>
    <%- include('../includes/user-navigation.ejs') %>
-	<% if (errorMessage) { %>
-		<div class="user-message user-message--error" id="msg"><%= errorMessage %></div>
-	  <% } %>
 	<section class="py-5">
         <div class="container py-5">
             <div class="row mb-4 mb-lg-5">
                 <div class="col-md-8 col-xl-6 text-center mx-auto">
                     <p class="fw-bold text-success mb-2" style="font-size: 40px;color: rgb(25, 245, 170);">Sign Up</p>
-                    <h2 class="fw-bold" style="font-size: 15px;">Already have an account?<a href="#" style="margin-left: 5px;color: rgb(25, 245, 170);">Login</a>&nbsp;</h2>
+                    <h2 class="fw-bold" style="font-size: 15px;">Already have an account?<a href="/login" style="margin-left: 5px;color: rgb(25, 245, 170);">Login</a>&nbsp;</h2>
+                    <!-- Error Alert -->
+                    <% if (errorMessage) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" style="margin-right: 120px;margin-left: 120px;">
+                            <strong>Error!</strong> <%= errorMessage %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
                 </div>
             </div>
             <div class="row d-flex justify-content-center">
@@ -26,11 +30,11 @@
 									<input class="form-control <%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>" type="password" name="password" value="<%= oldInput.password %>" placeholder="Password">
 								</div>
                                 <div class="mb-3">
-									<input class="form-control <%= validationErrors.find(e => e.param === 'confirmPassword') ? 'invalid' : '' %>" type="password" name="confirmpassoword" value="<%= oldInput.confirmPassword %>" placeholder="Confirm Password">
+									<input class="form-control <%= validationErrors.find(e => e.param === 'confirmPassword') ? 'invalid' : '' %>" type="password" name="confirmPassword" value="<%= oldInput.confirmPassword %>" placeholder="Confirm Password">
 								</div>
 								<input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <div class="mb-3">
-									<button class="btn btn-primary shadow d-block w-100" type="submit">Log in</button>
+									<button class="btn btn-primary shadow d-block w-100" type="submit">Sign Up</button>
 								</div>
                             </form>
 							<br>

@@ -1,37 +1,42 @@
 <%- include('../includes/head.ejs') %>
-<link rel="stylesheet" href="/css/form.css">
-<link rel="stylesheet" href="/css/auth.css">
 </head>
 
 <body>
-    <main>
-      <% if (errorMessage) { %>
-            <div class="user-message user-message--error"><%= errorMessage %></div>
-      <% } %>
-      <form class="login-form" action="/admin-login" method="POST">
-            <div class="form-control">
-                <label for="email">E-Mail</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>"
-                    type="email" 
-                    name="email" 
-                    id="email" 
-                    value="<%= oldInput.email %>">
-            </div>
-            <div class="form-control">
-                <label for="password">Password</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>"
-                    type="password" 
-                    name="password" 
-                    id="password" 
-                    value="<%= oldInput.password %>">
-            </div>
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button class="btn" type="submit">Login</button>
-        </form>
-      <div class="centered">
-        <a href="/admin-reset">Reset Password</a>
+    <section class="py-5">
+      <div class="container py-5">
+          <div class="row mb-4 mb-lg-5">
+              <div class="col-md-8 col-xl-6 text-center mx-auto">
+                  <p class="fw-bold text-success mb-2" style="font-size: 40px;color: rgb(25, 245, 170);">Admin Login</p>
+                  <!-- Error Alert -->
+                  <% if (errorMessage) { %>
+                      <div class="alert alert-danger alert-dismissible fade show" style="margin-right: 120px;margin-left: 120px;">
+                          <strong>Error!</strong> <%= errorMessage %>
+                          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                      </div>
+                  <% } %>
+              </div>
+          </div>
+          <div class="row d-flex justify-content-center">
+              <div class="col-md-6 col-xl-4">
+                  <div class="card">
+                      <div class="card-body text-center d-flex flex-column align-items-center" style="margin-top: -28px;">
+                          <form action="/admin-login" method="POST">
+                              <div class="mb-3">
+                                <input class="form-control <%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>" type="email" name="email" value="<%= oldInput.email %>" placeholder="Email">
+                              </div>
+                              <div class="mb-3">
+                                  <input class="form-control <%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>" type="password" name="password" value="<%= oldInput.password %>" placeholder="Password">
+                              </div>
+                              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                              <a href="/admin-reset" style="text-align: right;"><br><span style="color: rgb(176, 189, 211);">Forgot your password?</span><br><br></a>
+                              <div class="mb-3">
+                                <button class="btn btn-primary shadow d-block w-100" type="submit">Log in</button>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
       </div>
-    </main>
+  </section>
 <%- include('../includes/end.ejs') %>

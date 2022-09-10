@@ -1,64 +1,81 @@
 <%- include('../includes/head.ejs') %>
-    <!-- <link rel="stylesheet" href="/css/form.css">
-    <link rel="stylesheet" href="/css/event.css"> -->
 </head>
 
 <body>
   <%- include('../includes/user-navigation.ejs') %>
-    <main class="section">
-        <% if (errorMessage) { %>
-            <div class="user-message user-message--error"><%= errorMessage %></div>
-        <% } %>
-        <form class="product-form" action="/user-profile" method="POST">
-            <div class="form-control">
-                <label for="name">Full Name</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'name') ? 'invalid' : '' %>"
-                    type="text" 
-                    name="name" 
-                    id="name" 
-                    value="<% if (user.Name) { %><%= user.Name %><% } %>">
+        <section class="py-5">
+        <div class="container py-5" style="margin-top: 1px;padding-top: 0px;">
+            <div class="row mb-5">
+                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                    <p class="fw-bold text-success mb-2" style="margin-bottom: 26px;padding-bottom: 0px;padding-top: 0px; font-size:40px;">Profile</p>
+                    <h2 class="fw-bold">Please fill your details below</h2>
+                    <!-- Error Alert -->
+                    <% if (errorMessage) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" style="margin-right: 120px;margin-left: 120px;">
+                            <strong>Error!</strong> <%= errorMessage %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+                </div>
             </div>
-            <div class="form-control">
-                <label for="email">Email</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>"
-                    type="email" 
-                    name="email" 
-                    id="email" 
-                    value="<%= user.email %>"
-                    readonly>
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-6 col-xl-4">
+                    <div>
+                        <form class="p-3 p-xl-4" action="/user-profile" method="POST">
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'name') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="name" 
+                                id="name" 
+                                value="<% if (user.Name) { %><%= user.Name %><% } else { %><%= oldInput.name %><% } %>" 
+                                placeholder="Name">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="bg-secondary form-control <%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>" 
+                                type="email" 
+                                name="email" 
+                                id="email" 
+                                value="<% if (user.email) { %><%= user.email %><% } else { %><%= oldInput.email %><% } %>"
+                                readonly
+                                placeholder="Email">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'clgname') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="clgname" 
+                                id="clgname" 
+                                value="<% if (user.CollegeName) { %><%= user.CollegeName %><% } else { %><%= oldInput.clgname %><% } %>"
+                                placeholder="College Name">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'dept') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="dept" 
+                                id="dept" 
+                                value="<% if (user.Dept) { %><%= user.Dept %><% } else { %><%= oldInput.dept %><% } %>"
+                                placeholder="Department">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'phoneNo') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="phoneNo" 
+                                id="phoneNo" 
+                                value="<% if (user.PhoneNo) { %><%= user.PhoneNo %><% } else { %><%= oldInput.phoneNo %><% } %>"
+                                placeholder="Phone No.">
+                            </div>
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div>
+                                <button class="btn btn-primary shadow d-block w-100" type="submit">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-control">
-                <label for="clgname">College Name</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'clgname') ? 'invalid' : '' %>"
-                    type="text" 
-                    name="clgname" 
-                    id="clgname" 
-                    value="<% if (user.CollegeName) { %><%= user.CollegeName %><% } %>">
-            </div>
-            <div class="form-control">
-                <label for="dept">Department</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'dept') ? 'invalid' : '' %>"
-                    type="text" 
-                    name="dept" 
-                    id="dept" 
-                    value="<% if (user.Dept) { %><%= user.Dept %><% } %>">
-            </div>
-            <div class="form-control">
-                <label for="phoneNo">Phone No.</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'phoneNo') ? 'invalid' : '' %>"
-                    type="text" 
-                    name="phoneNo" 
-                    id="phoneNo" 
-                    value="<% if (user.PhoneNo) { %><%= user.PhoneNo %><% } %>">
-            </div>
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button class="btn" type="submit">Save Changes</button>
-        </form>
-
-    </main>
+        </div>
+    </section>
 <%- include('../includes/end.ejs') %>
