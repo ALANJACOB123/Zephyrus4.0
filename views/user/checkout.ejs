@@ -5,29 +5,46 @@
 
     <body>
         <%- include('../includes/user-navigation.ejs') %>
-        <main class="section">
-            <ul class="cart__item-list">
-                <% events.forEach(e => { %>
-                    <li class="cart__item">
-                        <h1><%= e.eventId.title %></h1>
-                    </li>
-                <% }) %>
-            </ul>
-            <div class="centered">
-                <h2>Total: <%= totalSum %></h2>
-            </div>
-            <div class="centered">
-                <button id="order-btn" class="btn">ORDER</button>
-                <script src="https://js.stripe.com/v3/"></script>
-                <script>
-                    var stripe = Stripe('pk_test_51KzxQjSJVrzWpKlzlD39aLTgxOmOmOG0PW2GfCt63dSqslRq1tEGTJL9TT4H3vV5OYCBZZWeF3EICG7sHF9nEBQg00Mx8z75zw');
-                    var orderBtn = document.getElementById('order-btn');
-                    orderBtn.addEventListener('click', function() {
-                        stripe.redirectToCheckout({
-                            sessionId: '<%= sessionId %>'
+        <section class="py-5">
+            <div class="container py-5">
+                <div class="row mx-auto" style="/*max-width: 700px;*/">
+                    <div class="col mb-sm-0">
+                        <h1>Checkout</h1>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="padding-top: 37px;margin-top: 0px;">Event Name</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <% events.forEach(e => { %>
+                                            <td><%= e.eventId.title %></td>
+                                            <td><%= e.eventId.price %></td>
+                                        <% }) %>
+                                    </tr>
+                                    <tr>
+                                        <td class="h4">Total</td>
+                                        <td class="h4"><%= totalSum %></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button id="order-btn" class="btn btn-primary mt-sm-5" type="button">PAY</button>
+                        <script src="https://js.stripe.com/v3/"></script>
+                        <script>
+                            var stripe = Stripe('pk_test_51KzxQjSJVrzWpKlzlD39aLTgxOmOmOG0PW2GfCt63dSqslRq1tEGTJL9TT4H3vV5OYCBZZWeF3EICG7sHF9nEBQg00Mx8z75zw');
+                            var orderBtn = document.getElementById('order-btn');
+                            orderBtn.addEventListener('click', function() {
+                            stripe.redirectToCheckout({
+                                sessionId: '<%= sessionId %>'
+                            });
                         });
-                    });
-                </script>
+                        </script>
+                    </div>
+                </div>
             </div>
-        </main>
+        </section>
         <%- include('../includes/end.ejs') %>

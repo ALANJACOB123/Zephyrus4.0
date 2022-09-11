@@ -3,42 +3,61 @@
 
     <body style="/*background: url(&quot;design.jpg&quot;);*/background-position: 0 -60px;">
         <%- include('../includes/admin-navigation.ejs') %>
-
-            <main>
-                <% if (events.length > 0) { %>
-                    <div class="grid">
-                        <% for (let event of events) { %>
-                            <article class="card product-item">
-                                <header class="card__header">
-                                    <h1 class="product__title">
-                                        <%=event.title %>
-                                    </h1>
-                                </header>
-                                <div class="card__image">
-                                    <img src="/<%= event.imageUrl %>" alt="<%= event.title %>">
+            <section class="py-5">
+                <div class="container py-5">
+                    <div class="row mb-4 mb-lg-5">
+                        <div class="col-md-8 col-xl-6 text-center mx-auto">
+                            <h1 class="fw-bold">Events</h1>
+                            <p class="text-muted w-lg-50">List of all the events you can participate and win!.&nbsp;</p>
+                        </div>
+                    </div>
+                    <% if (events.length > 0) { %>
+                    <div class="row mx-auto" style="/*max-width: 700px;*/">
+                        <div class="col">
+                            <section class="py-2">
+                                <div class="container py-2">
+                                    <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                                        <% for (let event of events) { %>
+                                        <div class="col mb-4 mt-2">
+                                            <div>
+                                                <a href="#">
+                                                    <img class="rounded img-fluid shadow w-100 fit-cover" src="/<%= event.imageUrl %>" alt="<%= event.title %>" style="height: 250px;">
+                                                </a>
+                                                <div class="py-4">
+                                                    <span class="badge bg-primary mb-2">Price - <%= event.price %></span>
+                                                    <h4 class="fw-bold"><%= event.title %></h4>
+                                                    <p class="text-muted"><%= event.description %></p>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex">
+                                                <% if (isAuthenticated) { %>
+                                                    <%- include('../includes/register.ejs', {event: event}) %>
+                                                <% } %>
+                                                <a href="/admin/edit-event/<%= event._id %>?edit=true" class="btn btn-primary" type="button">Edit</a>
+                                                <form action="/admin/delete-event" method="POST">
+                                                    <input type="hidden" value="<%= event._id %>" name="eventId">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <button class="btn btn-primary" type="submit" style="margin-left: 14px;">Delete</button>
+                                                </form>
+                                            </div>
+                                            
+                                        </div>
+                                        <% } %>
+                                    </div>
                                 </div>
-                                <div class="card__content">
-                                    <h2 class="product__price">$
-                                        <%= event.price %>
-                                    </h2>
-                                    <p class="product__description">
-                                        <%= event.description %>
-                                    </p>
-                                </div>
-                                <div class="card__actions">
-                                    <a href="/admin/edit-event/<%= event._id %>?edit=true" class="btn">Edit</a>
-                                    <form action="/admin/delete-event" method="POST">
-                                        <input type="hidden" value="<%= event._id %>" name="eventId">
-                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                        <button class="btn" type="submit">Delete</button>
-                                    </form>
-
-                                </div>
-                            </article>
-                            <% } %>
+                            </section>
+                        </div>
                     </div>
                     <% } else { %>
-                        <h1>No Events Found!</h1>
-                        <% } %>
-            </main>
+                        <div class="container">
+                            <div class="row mb-4 mb-lg-5">
+                                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                                    <h1>No Events Found!</h1>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </section>
             <%- include('../includes/end.ejs') %>

@@ -121,13 +121,13 @@ router.get(
             req.session.userImage = user.image;
             return req.session.save((err) => {
               console.log(err);
-              if(user.Name !== '' && user.CollegeName !== '' && user.Dept !== '' && user.PhoneNo !== '')
+              if(user.Name === undefined && user.CollegeName === undefined && user.Dept === undefined && user.PhoneNo === undefined)
               {
-                res.redirect("/");
+                res.redirect("/user-profile");
               }
               else
               {
-                res.redirect("/user-profile");
+                res.redirect("/");
               }
             });
           }

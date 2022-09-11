@@ -3,16 +3,61 @@
 
     <body>
         <%- include('../includes/user-navigation.ejs') %>
-        <main class="centered section">
-            <h1><%= event.title %></h1>
-            <hr>
-            <div class="image">
-                <img src="/<%= event.imageUrl %>" alt="<%= event.title %>">
+        <section class="py-5">
+            <div class="container py-5">
+                <a class="btn btn-primary" href="/events" style="font-size: 20px;margin-bottom: 26px;">Go Back</a>
+                <img class="event-details-img img-fluid" src="/<%= event.imageUrl %>" alt="<%= event.title %>" width="1296" height="500">
             </div>
-            <h2><%= event.price %></h2>
-            <p><%= event.description %></p>
-            <% if (isAuthenticated) { %>
-                <%- include('../includes/register.ejs', {event: event}) %>
-            <% } %>
-        </main>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h1><%= event.title %>
+                            <button class="btn btn-primary btn-success" type="button" style="margin-left: 38px;padding-bottom: 7px;">Price - 100</button>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="h3" style="margin-top: 7px;"><%= event.description %></p>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>Teacher Coordinator</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>Student Coordinator</p>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>Date</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Time</p>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12"><a href="#">Brochure link</a></div>
+                </div>
+            </div>
+            
+            <div class="container">
+                <div class="row">
+                    <% if (isAuthenticated) { %>
+                        <%- include('../includes/event-detail-register.ejs', {event: event}) %>
+                    <% } %>
+                </div>
+            </div>
+        </section>
         <%- include('../includes/end.ejs') %>

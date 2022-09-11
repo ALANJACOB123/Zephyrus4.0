@@ -19,7 +19,8 @@
                                         <%= event.registrations %>
                                     </h2>
                                 </div>
-                                <a href="/admin/registrations/<%= event.title %>">Download</a>
+                                <% if (event.registrations > 0) 
+                                { %><a href="/admin/registrations/<%= event.title %>">Download</a> <% } %> 
                             </article>
                             <% } %>
                     </div>

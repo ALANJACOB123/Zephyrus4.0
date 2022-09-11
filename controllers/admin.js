@@ -108,7 +108,7 @@ exports.postAddEvent = (req, res, next) => {
       validationErrors: []
     });
   }
-
+  const imageUrl = image.path;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render('admin/edit-event', {
@@ -126,8 +126,6 @@ exports.postAddEvent = (req, res, next) => {
       validationErrors: errors.array()
     });
   }
-
-  const imageUrl = image.path;
 
   const event = new Event({
     title: title,
@@ -223,9 +221,6 @@ exports.postEditEvent = (req, res, next) => {
 
   Event.findById(eventId)
     .then((event) => {
-      if (event.userId.toString() !== req.session.user._id.toString()) {
-        return res.redirect("/admin/events");
-      }
       event.title = updatedTitle;
       event.price = updatedPrice;
       event.description = updatedDesc;
@@ -288,16 +283,19 @@ exports.getRegistrations = async (req, res, next) => {
         e.populate('registration.users.userId')
           .execPopulate()
           .then(user => {
-            const users = user.registration.users[0].userId;
-            const fields = ['Name', 'email'];
-            const opts = { fields };
-            try {
-              const csv = parse(users, opts);
-              fs.writeFile(`data/excel/${e.title}.csv`, csv, function (err) {
-                if (err) throw err;
-              });
-            } catch (err) {
+            if(user.registration.users === [] ) 
+            {
+              const users = user.registration.users[0].userId;
+              const fields = ['Name', 'email'];
+              const opts = { fields };
+              try {
+                const csv = parse(users, opts);
+                fs.writeFile(`data/excel/${e.title}.csv`, csv, function (err) {
+                  if (err) throw err;
+                });
+              } catch (err) {
               console.error(err);
+            }
             }
           })
       })

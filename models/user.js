@@ -75,8 +75,7 @@ userSchema.methods.addToRegister = function (event) {
     events: updatedRegisterEvents
   };
   this.registration = updatedRegister;
-  console.log("Hello");
-  return this.save();
+  return this.save()
 };
 
 
