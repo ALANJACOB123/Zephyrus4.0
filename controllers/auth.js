@@ -114,10 +114,31 @@ exports.getAdminReset = (req, res, next) => {
   res.render("admin/admin-reset", {
     path: "/admin-reset",
     pageTitle: "Reset Password",
+    errorMessage: '',
+    oldInput: {
+      email: '',
+    },
+    validationErrors: [],
   });
 };
 
 exports.postAdminReset = (req, res, next) => {
+  let email = req.body.email;
+  if(email === '@'){
+    email = '';
+  }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('admin/admin-reset', {
+      path: '/admin-reset',
+      pageTitle: 'Reset Password',
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        email: email,
+      },
+      validationErrors: errors.array()
+    });
+  }
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
       console.log(err);
@@ -127,8 +148,15 @@ exports.postAdminReset = (req, res, next) => {
     AdminUser.findOne({ email: req.body.email })
       .then((user) => {
         if (!user) {
-          // req.flash("error", "No account with that email found.");
-          return res.redirect("/admin-reset");
+          return res.status(422).render('admin/admin-reset', {
+            path: '/admin-reset',
+            pageTitle: 'Reset Password',
+            errorMessage: 'No account with that email found.',
+            oldInput: {
+              email: req.body.email,
+            },
+            validationErrors: []
+          });
         }
         user.resetToken = token;
         user.resetTokenExpiration = Date.now() + 3600000;
@@ -411,11 +439,32 @@ exports.getReset = (req, res, next) => {
   res.render("auth/reset", {
     path: "/reset",
     pageTitle: "Reset Password",
-    spotAccess: false
+    spotAccess: false,
+    errorMessage: '',
+    oldInput: {
+      email: '',
+    },
+    validationErrors: [],
   });
 };
 
 exports.postReset = (req, res, next) => {
+  let email = req.body.email;
+  if(email === '@'){
+    email = '';
+  }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/reset', {
+      path: '/reset',
+      pageTitle: 'Reset Password',
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        email: email,
+      },
+      validationErrors: errors.array()
+    });
+  }
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
       console.log(err);
@@ -425,8 +474,15 @@ exports.postReset = (req, res, next) => {
     User.findOne({ email: req.body.email })
       .then((user) => {
         if (!user) {
-          req.flash("error", "No account with that email found.");
-          return res.redirect("/reset");
+          return res.status(422).render('auth/reset', {
+            path: '/reset',
+            pageTitle: 'Reset Password',
+            errorMessage: 'No account with that email found.',
+            oldInput: {
+              email: req.body.email,
+            },
+            validationErrors: []
+          });
         }
         user.resetToken = token;
         user.resetTokenExpiration = Date.now() + 3600000;

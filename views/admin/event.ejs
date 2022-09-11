@@ -30,9 +30,6 @@
                                                 </div>
                                             </div>
                                             <div class="d-flex">
-                                                <% if (isAuthenticated) { %>
-                                                    <%- include('../includes/register.ejs', {event: event}) %>
-                                                <% } %>
                                                 <a href="/admin/edit-event/<%= event._id %>?edit=true" class="btn btn-primary" type="button">Edit</a>
                                                 <form action="/admin/delete-event" method="POST">
                                                     <input type="hidden" value="<%= event._id %>" name="eventId">

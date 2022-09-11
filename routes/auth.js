@@ -25,7 +25,12 @@ router.post("/admin-logout", isAuth.adminAuth, authController.postAdminLogout);
 
 router.get("/admin-reset", authController.getAdminReset);
 
-router.post("/admin-reset", authController.postAdminReset);
+router.post("/admin-reset",[
+  check('email')
+    .isEmail()
+    .withMessage('Please Enter a valid Email')
+    .normalizeEmail(),
+], authController.postAdminReset);
 
 router.get("/admin-reset/:token", authController.getAdminNewPassword);
 
@@ -51,10 +56,6 @@ router.post("/signup", [
     .isEmail()
     .withMessage('Please enter a valid email.')
     .custom((value, { req }) => {
-      // if (value === 'test@test.com') {
-      //   throw new Error('This email address if forbidden.');
-      // }
-      // return true;
       return User.findOne({ email: value }).then(userDoc => {
         if (userDoc) {
           return Promise.reject(
@@ -85,7 +86,12 @@ router.post("/logout", authController.postLogout);
 
 router.get("/reset", authController.getReset);
 
-router.post("/reset", authController.postReset);
+router.post("/reset",[
+  check('email')
+    .isEmail()
+    .withMessage('Please enter a valid email.')
+    .normalizeEmail(),
+], authController.postReset);
 
 router.get("/reset/:token", authController.getNewPassword);
 

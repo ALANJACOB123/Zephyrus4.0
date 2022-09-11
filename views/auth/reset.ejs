@@ -1,9 +1,7 @@
 <%- include('../includes/head.ejs') %>
-    <!-- <link rel="stylesheet" href="/css/form.css">
-    <link rel="stylesheet" href="/css/auth.css"> -->
 </head>
 
-<body>
+<body style="/*background: url(&quot;design.jpg&quot;);*/background-position: 0 -60px;">
    <%- include('../includes/user-navigation.ejs') %>
     <section class="py-5">
         <div class="container py-5">
@@ -11,6 +9,13 @@
                 <div class="col-md-8 col-xl-6 text-center mx-auto">
                     <p class="fw-bold text-success mb-2" style="font-size: 40px;color: rgb(25, 245, 170);">Reset Password</p>
                     <h2 class="fw-bold" style="font-size: 15px;">please fill your registered&nbsp;<span style="color: rgb(25, 245, 170);">E-mail</span></h2>
+                    <!-- Error Alert -->
+                    <% if (errorMessage) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" style="margin-right: 120px;margin-left: 120px;">
+                            <strong>Error!</strong> <%= errorMessage %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
                 </div>
             </div>
             <div class="row d-flex justify-content-center">
@@ -19,7 +24,7 @@
                         <div class="card-body text-center d-flex flex-column align-items-center" style="margin-top: -28px;">
                             <form action="/reset" method="post">
                                 <div class="mb-3">
-                                    <input class="form-control" type="email" name="email" placeholder="Email">
+                                    <input class="form-control <%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>" type="email" name="email" value="<%= oldInput.email %>" placeholder="Email">
                                 </div>
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <div class="mb-3">

@@ -1,57 +1,75 @@
 <%- include('../includes/head.ejs') %>
-    <link rel="stylesheet" href="/css/form.css">
-    <link rel="stylesheet" href="/css/event.css">
 </head>
 
-<body>
+<body style="/*background: url(&quot;design.jpg&quot;);*/background-position: 0 -60px;">
    <%- include('../includes/admin-navigation.ejs') %>
-
-    <main>
-        <% if (errorMessage) { %>
-            <div class="user-message user-message--error"><%= errorMessage %></div>
-        <% } %>
-        <form class="product-form" action="/admin/<% if (editing) { %>edit-event<% } else { %>add-event<% } %>" method="POST" enctype="multipart/form-data">
-            <div class="form-control">
-                <label for="title">Title</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'title') ? 'invalid' : '' %>"
-                    type="text" 
-                    name="title" 
-                    id="title" 
-                    value="<% if (editing || hasError) { %><%= event.title %><% } %>">
+    <section class="py-5">
+        <div class="container py-5" style="padding-top: 85px;">
+            <div class="row mb-5">
+                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                    <p class="fw-bold text-success mb-2" style="font-size: 40px;">Create Event</p>
+                    <h2 class="fw-bold" style="font-size: 15px;">Please fill the details below to create a new event</h2>
+                    <!-- Error Alert -->
+                    <% if (errorMessage) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" style="margin-right: 120px;margin-left: 120px;">
+                            <strong>Error!</strong> <%= errorMessage %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+                </div>
             </div>
-            <div class="form-control">
-                <label for="image">Image</label>
-                <input 
-                    type="file" 
-                    name="image" 
-                    id="image" >
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-6 col-xl-4">
+                    <div>
+                        <form class="p-3 p-xl-4" action="/admin/<% if (editing) { %>edit-event<% } else { %>add-event<% } %>" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'title') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="title" 
+                                id="title" 
+                                value="<% if (editing || hasError) { %><%= event.title %><% } %>"
+                                placeholder="Title">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control" 
+                                type="file" 
+                                name="image" 
+                                id="image"
+                                placeholder="Image">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'price') ? 'invalid' : '' %>" 
+                                type="number" 
+                                name="price" 
+                                id="price" 
+                                step="0.01" 
+                                value="<% if (editing || hasError) { %><%= event.price %><% } %>"
+                                placeholder="Price">
+                            </div>
+                            <div class="mb-3">
+                                <textarea 
+                                class="form-control <%= validationErrors.find(e => e.param === 'description') ? 'invalid' : '' %>" 
+                                name="description" 
+                                id="description" 
+                                rows="6" 
+                                placeholder="Description">
+                                <% if (editing || hasError) { %><%= event.description %><% } %>
+                                </textarea>
+                            </div>
+                            <% if (editing) { %>
+                                <input type="hidden" value="<%= event._id %>" name="eventId">
+                            <% } %>
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div>
+                                <button class="btn btn-primary shadow d-block w-100" type="submit"><% if (editing) { %>Update Event<% } else { %>Create Event<% } %></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-control">
-                <label for="price">Price</label>
-                <input 
-                    class="<%= validationErrors.find(e => e.param === 'price') ? 'invalid' : '' %>"
-                    type="number" 
-                    name="price" 
-                    id="price" 
-                    step="0.01" 
-                    value="<% if (editing || hasError) { %><%= event.price %><% } %>">
-            </div>
-            <div class="form-control">
-                <label for="description">Description</label>
-                <textarea 
-                    class="<%= validationErrors.find(e => e.param === 'description') ? 'invalid' : '' %>"
-                    name="description" 
-                    id="description" 
-                    rows="5"><% if (editing || hasError) { %><%= event.description %><% } %></textarea>
-            </div>
-            <% if (editing) { %>
-                <input type="hidden" value="<%= event._id %>" name="eventId">
-            <% } %>
-
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button class="btn" type="submit"><% if (editing) { %>Update Event<% } else { %>Add Event<% } %></button>
-        </form>
-
-    </main>
+        </div>
+    </section>
 <%- include('../includes/end.ejs') %>

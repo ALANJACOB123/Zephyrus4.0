@@ -225,8 +225,8 @@ exports.postEditEvent = (req, res, next) => {
       event.price = updatedPrice;
       event.description = updatedDesc;
       if (image) {
-        fileHelper.deleteFile(product.imageUrl);
-        product.imageUrl = image.path;
+        fileHelper.deleteFile(event.imageUrl);
+        event.imageUrl = image.path;
       }
       return event.save().then((result) => {
         console.log("UPDATED EVENT!");
@@ -251,7 +251,7 @@ exports.postDeleteEvent = (req, res, next) => {
       return Event.deleteOne({ _id: eventId });
     })
     .then(() => {
-      console.log('DESTROYED PRODUCT');
+      console.log('DESTROYED EVENT!!');
       res.redirect('/admin/events');
     })
     .catch(err => {
@@ -283,7 +283,7 @@ exports.getRegistrations = async (req, res, next) => {
         e.populate('registration.users.userId')
           .execPopulate()
           .then(user => {
-            if(user.registration.users === [] ) 
+            if(user.registration.users[0] !== undefined ) 
             {
               const users = user.registration.users[0].userId;
               const fields = ['Name', 'email'];

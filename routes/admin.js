@@ -45,11 +45,15 @@ router.post("/add-event", [
   body('title')
     .isString()
     .isLength({ min: 3 })
+    .withMessage('Please enter a valid Title.')
     .trim(),
-  body('price').isFloat(),
+  body('price')
+    .isFloat()
+    .withMessage('Please enter a valid Price Value.'),
   body('description')
     .isLength({ min: 5, max: 400 })
     .trim()
+    .withMessage('Please enter a valid Description.')
 ],
   isAuth.adminAuth, adminController.postAddEvent);
 
