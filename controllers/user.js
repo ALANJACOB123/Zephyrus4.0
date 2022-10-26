@@ -56,6 +56,7 @@ exports.getRegistration = (req, res, next) => {
     .execPopulate()
     .then(user => {
       const events = user.registration.events;
+      console.log(events)
       res.render('user/registration', {
         path: '/register',
         pageTitle: 'Your Events',

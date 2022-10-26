@@ -84,4 +84,3 @@
 
   initParallax();
 })(); // End of use strict
-

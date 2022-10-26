@@ -6,7 +6,7 @@ const adminController = require("../controllers/admin");
 
 const router = express.Router();
 
-router.get("/", isAuth.adminAuth, adminController.getAdminPage);
+// router.get("/", isAuth.adminAuth, adminController.getAdminPage);
 
 router.get("/add-admin", isAuth.adminAuth, adminController.getNewAdmin);
 

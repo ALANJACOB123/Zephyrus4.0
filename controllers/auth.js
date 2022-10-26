@@ -76,7 +76,7 @@ exports.postAdminLogin = (req, res, next) => {
             req.session.isAdminLoggedIn = true;
             req.session.user = user;
             return req.session.save((err) => {
-              return res.redirect("/admin");
+              return res.redirect("/admin/events");
             });
           }
           return res.status(422).render('admin/admin-zephyrus', {

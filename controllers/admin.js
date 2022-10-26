@@ -12,12 +12,12 @@ const Event = require("../models/event");
 const Order = require('../models/order');
 
 
-exports.getAdminPage = (req, res, next) => {
-  res.render("admin/zephyrus", {
-    pageTitle: "Zephyrus",
-    path: "/",
-  });
-};
+// exports.getAdminPage = (req, res, next) => {
+//   res.render("admin/zephyrus", {
+//     pageTitle: "Zephyrus",
+//     path: "/",
+//   });
+// };
 
 exports.getNewAdmin = (req, res, next) => {
   let message = req.flash('error');

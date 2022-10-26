@@ -3,10 +3,14 @@
 
 <body style="/*background: url(&quot;design.jpg&quot;);*/background-position: 0 -60px;">
    <%- include('../includes/user-navigation.ejs') %>
-	<section class="py-5">
-        <div class="container py-5">
+   <div class="area" >
+        <ul class="circles mb-0">
+            <li></li><li></li><li></li><li></li><li></li<li></li><li></li><li></li><li></li><li></li><li></li>
+        </ul>
+	<section class="section">
+        <div class="container pt-5">
             <div class="row mb-4 mb-lg-5">
-                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                <div class="col-md-8 col-xl-6 text-center mx-auto" style="z-index: 1000;">
                     <p class="fw-bold text-success mb-2" style="font-size: 40px;color: rgb(25, 245, 170);">Sign Up</p>
                     <h2 class="fw-bold" style="font-size: 15px;">Already have an account?<a href="/login" style="margin-left: 5px;color: rgb(25, 245, 170);">Login</a>&nbsp;</h2>
                     <!-- Error Alert -->
@@ -20,7 +24,7 @@
             </div>
             <div class="row d-flex justify-content-center">
                 <div class="col-md-6 col-xl-4">
-                    <div class="card">
+                    <div class="card ">
                         <div class="card-body text-center d-flex flex-column align-items-center" style="margin-top: -28px;">
                             <form action="/signup" method="post">
                                 <div class="mb-3">
@@ -52,4 +56,5 @@
             </div>
         </div>
     </section>
+    </div >
 <%- include('../includes/end.ejs') %>
