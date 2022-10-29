@@ -8,25 +8,34 @@ const { validationResult } = require('express-validator/check');
 const AdminUser = require("../models/admin-user");
 const User = require("../models/user");
 
-const transporter = nodemailer.createTransport({
-  service: "hotmail",
+let transporter = nodemailer.createTransport({
+  host: "smtp.zoho.in",
+  secure: true,
+  port: 465,
   auth: {
-    user: "zephyrus4.0@outlook.com",
-    pass: "zephyrus@4.0",
+    user: "alanjacob433@zohomail.in",
+    pass: "7AUisiV3cNXg"
   },
 });
 
 exports.getAdminLogin = (req, res, next) => {
   let message = req.flash('error');
+  let emailsent = req.flash('emailsent')
   if (message.length > 0) {
     message = message[0];
   } else {
     message = null;
   }
-  res.render("admin/admin-zephyrus", {
+  if (emailsent.length > 0) {
+    emailsent = emailsent[0];
+  } else {
+    emailsent = null;
+  }
+  res.render("admin/admin-login", {
     pageTitle: "Admin-Login",
     path: "/admin",
     errorMessage: message,
+    emailsent: emailsent,
     oldInput: {
       email: '',
       password: ''
@@ -43,7 +52,7 @@ exports.postAdminLogin = (req, res, next) => {
   const password = req.body.password;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render('admin/admin-zephyrus', {
+    return res.status(422).render('admin/admin-login', {
       path: '/admin-login',
       pageTitle: 'Admin-Login',
       errorMessage: errors.array()[0].msg,
@@ -57,7 +66,7 @@ exports.postAdminLogin = (req, res, next) => {
   AdminUser.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        return res.status(422).render('admin/admin-zephyrus', {
+        return res.status(422).render('admin/admin-login', {
           path: '/admin-login',
           pageTitle: 'Admin-Login',
           errorMessage: 'Invalid email or password.',
@@ -79,7 +88,7 @@ exports.postAdminLogin = (req, res, next) => {
               return res.redirect("/admin/events");
             });
           }
-          return res.status(422).render('admin/admin-zephyrus', {
+          return res.status(422).render('admin/admin-login', {
             path: '/admin-login',
             pageTitle: 'Admin-Login',
             errorMessage: 'Invalid email or password.',
@@ -163,10 +172,11 @@ exports.postAdminReset = (req, res, next) => {
         return user.save();
       })
       .then((result) => {
+        req.flash('emailsent', 'Please check your Email for password reset link');
         res.redirect("/admin-login");
         return transporter.sendMail({
           to: req.body.email,
-          from: "zephyrus4.0@outlook.com",
+          from: "alanjacob433@gmail.com",
           subject: "Password reset",
           html: `
             <p>You requested a password reset</p>
@@ -184,32 +194,86 @@ exports.postAdminReset = (req, res, next) => {
 };
 
 exports.getAdminNewPassword = (req, res, next) => {
+  let message = req.flash('success');
+  console.log(message);
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   const token = req.params.token;
-  AdminUser.findOne({
-    resetToken: token,
-    resetTokenExpiration: { $gt: Date.now() },
-  })
-    .then((user) => {
-      res.render("admin/admin-new-password", {
-        path: "/admin-new-password",
-        pageTitle: "New Password",
-        userId: user._id.toString(),
-        passwordToken: token,
-      });
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
+  if(message)
+  {
+    res.render("admin/admin-new-password", {
+      path: "/admin-new-password",
+      pageTitle: "New Password",
+      userId: '',
+      passwordToken: token,
+      errorMessage: null,
+      success: message,
+      oldInput: {
+        password: '',
+        confirmPassword: ''
+      },
+      windowclose: true,
+      validationErrors: [],
     });
+  }
+  else
+  {
+    AdminUser.findOne({
+      resetToken: token,
+      resetTokenExpiration: { $gt: Date.now() },
+    })
+      .then((user) => {
+        res.render("admin/admin-new-password", {
+          path: "/admin-new-password",
+          pageTitle: "New Password",
+          userId: user._id.toString(),
+          passwordToken: token,
+          errorMessage: message,
+          success: message,
+          oldInput: {
+            password: '',
+            confirmPassword: ''
+          },
+          validationErrors: [],
+          windowclose: false,
+        });
+      })
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
+  }
+  
 };
 
 exports.postAdminNewPassword = (req, res, next) => {
   const newPassword = req.body.password;
+  const confirmPassword = req.body.confirmPassword;
   const userId = req.body.userId;
   const passwordToken = req.body.passwordToken;
+  const token = passwordToken;
   let resetUser;
-
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('admin/admin-new-password', {
+      path: '/admin-new-password',
+      pageTitle: 'New Password',
+      errorMessage: errors.array()[0].msg,
+      userId: userId,
+      passwordToken: passwordToken,
+      success: null,
+      oldInput: {
+        password: newPassword,
+        confirmPassword: confirmPassword
+      },
+      validationErrors: errors.array(),
+      windowclose: false,
+    });
+  }
   AdminUser.findOne({
     resetToken: passwordToken,
     resetTokenExpiration: { $gt: Date.now() },
@@ -226,7 +290,8 @@ exports.postAdminNewPassword = (req, res, next) => {
       return resetUser.save();
     })
     .then((result) => {
-      res.redirect("/admin-login");
+      req.flash('success', 'Your pasword has been successfully Reset. This window will be automatically closed')
+      res.redirect(`/admin-reset/${token}`);
     })
     .catch((err) => {
       const error = new Error(err);
@@ -237,15 +302,22 @@ exports.postAdminNewPassword = (req, res, next) => {
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash('error');
+  let emailsent = req.flash('emailsent');
   if (message.length > 0) {
     message = message[0];
   } else {
     message = null;
   }
+  if (emailsent.length > 0) {
+    emailsent = emailsent[0];
+  } else {
+    emailsent = null;
+  }
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
     errorMessage: message,
+    emailsent: emailsent,
     oldInput: {
       email: '',
       password: '',
@@ -321,7 +393,13 @@ exports.postLogin = (req, res, next) => {
             req.session.user = user;
             return req.session.save((err) => {
               console.log(err);
-              if(user.Name === undefined && user.CollegeName === undefined && user.Dept === undefined && user.PhoneNo === undefined)
+              if(user.Name === undefined 
+                && user.CollegeName === undefined 
+                && user.Dept === undefined 
+                && user.Address === undefined 
+                && user.State === undefined 
+                && user.PhoneNo === undefined
+              )
               {
                 res.redirect("/user-profile");
 
@@ -489,10 +567,11 @@ exports.postReset = (req, res, next) => {
         return user.save();
       })
       .then((result) => {
-        res.redirect("/");
+        req.flash('emailsent', 'Please check your Email for password reset link')
+        res.redirect("/login");
         return transporter.sendMail({
           to: req.body.email,
-          from: "zephyrus4.0@outlook.com",
+          from: "alanjacob433@gmail.com",
           subject: "Password reset",
           html: `
             <p>You requested a password reset</p>
@@ -509,14 +588,48 @@ exports.postReset = (req, res, next) => {
 };
 
 exports.getNewPassword = (req, res, next) => {
+  let message = req.flash('success');
+  console.log(message);
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   const token = req.params.token;
-  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+  if(message)
+  {
+    res.render("admin/admin-new-password", {
+      path: "/admin-new-password",
+      pageTitle: "New Password",
+      userId: '',
+      passwordToken: token,
+      errorMessage: null,
+      success: message,
+      oldInput: {
+        password: '',
+        confirmPassword: ''
+      },
+      windowclose: true,
+      validationErrors: [],
+    });
+  }
+  else
+  {
+    User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
     .then((user) => {
       res.render("auth/new-password", {
         path: "/new-password",
         pageTitle: "New Password",
         userId: user._id.toString(),
+        errorMessage: message,
+          success: message,
+          oldInput: {
+            password: '',
+            confirmPassword: ''
+          },
         passwordToken: token,
+        windowclose: false,
+        validationErrors: [],
       });
     })
     .catch((err) => {
@@ -524,14 +637,34 @@ exports.getNewPassword = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
+  }
+  
 };
 
 exports.postNewPassword = (req, res, next) => {
   const newPassword = req.body.password;
+  const confirmPassword = req.body.confirmPassword;
   const userId = req.body.userId;
   const passwordToken = req.body.passwordToken;
+  const token = passwordToken;
   let resetUser;
-
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/new-password', {
+      path: '/new-password',
+      pageTitle: 'New Password',
+      errorMessage: errors.array()[0].msg,
+      userId: userId,
+      passwordToken: passwordToken,
+      success: null,
+      oldInput: {
+        password: newPassword,
+        confirmPassword: confirmPassword
+      },
+      validationErrors: errors.array(),
+      windowclose: false,
+    });
+  }
   User.findOne({
     resetToken: passwordToken,
     resetTokenExpiration: { $gt: Date.now() },
@@ -548,7 +681,8 @@ exports.postNewPassword = (req, res, next) => {
       return resetUser.save();
     })
     .then((result) => {
-      res.redirect("/login");
+      req.flash('success', 'Your pasword has been successfully Reset. This window will be automatically closed')
+      res.redirect(`reset/${token}`);
     })
     .catch((err) => {
       const error = new Error(err);

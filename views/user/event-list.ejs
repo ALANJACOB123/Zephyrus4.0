@@ -5,6 +5,14 @@
         <%- include('../includes/user-navigation.ejs') %>
             <section class="py-5">
                 <div class="container py-5">
+                    <% if (success) { %>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="width: 325px;margin-left: auto;">
+                        <span class="text-center">
+                            <strong><%= success %>&nbsp;</strong>👍
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </span>
+                    </div>
+                    <% } %>
                     <div class="row mb-4 mb-lg-5">
                         <div class="col-md-8 col-xl-6 text-center mx-auto">
                             <h1 class="fw-bold">Events</h1>
@@ -27,6 +35,7 @@
                                                     <span class="badge bg-primary mb-2">Price - <%= event.price %></span>
                                                     <h4 class="fw-bold"><%= event.title %></h4>
                                                     <p class="text-muted"><%= event.description %></p>
+                                                    <h4 class="fw-bold" style="margin-right: 197px;font-size: 17px;">Event Type - <span style="font-size: 18px;"><%= event.type %></span></h4>
                                                 </div>
                                             </div>
                                             <div class="d-flex">

@@ -14,6 +14,12 @@
                           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                       </div>
                   <% } %>
+                  <% if (emailsent) { %>
+                    <div class="alert alert-success alert-dismissible fade show" style="margin-right: 57px;margin-left: 57px;">
+                        <strong>Success!</strong> <%= emailsent %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                   <% } %>
               </div>
           </div>
           <div class="row d-flex justify-content-center">

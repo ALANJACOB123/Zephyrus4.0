@@ -19,6 +19,10 @@ const eventSchema = new Schema({
     type: String,
     required: true,
   },
+  type: {
+    type: String,
+    required: true,
+  },
   registrations: {
     type: Number,
     required: false,

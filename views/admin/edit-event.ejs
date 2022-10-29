@@ -50,6 +50,15 @@
                                 placeholder="Price">
                             </div>
                             <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="type" 
+                                id="type" 
+                                value="<% if (editing || hasError) { %><%= event.type %><% } %>"
+                                placeholder="Type">
+                            </div>
+                            <div class="mb-3">
                                 <textarea 
                                 class="form-control <%= validationErrors.find(e => e.param === 'description') ? 'invalid' : '' %>" 
                                 name="description" 

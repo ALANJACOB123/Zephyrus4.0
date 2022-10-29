@@ -14,6 +14,8 @@ router.post('/user-profile',[
     check('name').not().isEmpty().withMessage('Please Enter a valid Name'),
     check('clgname').not().isEmpty().withMessage('Please Enter a valid College Name'),
     check('dept').not().isEmpty().withMessage('Please Enter a valid Department Name'),
+    check('address').not().isEmpty().withMessage('Please Enter a valid Place Name'),
+    check('state').not().isEmpty().withMessage('Please Enter a valid State Name'),
     body('phoneNo', 'Please Enter a valid Phone Number')
       .exists()
       .isMobilePhone()

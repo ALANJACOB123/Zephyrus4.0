@@ -18,12 +18,22 @@ exports.getPage = (req, res, next) => {
 };
 
 exports.getEvents = (req, res, next) => {
+  let message = req.flash('success');
+  if(message.length > 0)
+  {
+    message = message[0];
+  }
+  else
+  {
+    message = null;
+  }
   Event.find()
     .then((events) => {
       res.render("user/event-list", {
         events: events,
         pageTitle: "All Events",
         path: "/events",
+        success: message
       });
     })
     .catch((err) => {
@@ -56,7 +66,6 @@ exports.getRegistration = (req, res, next) => {
     .execPopulate()
     .then(user => {
       const events = user.registration.events;
-      console.log(events)
       res.render('user/registration', {
         path: '/register',
         pageTitle: 'Your Events',
@@ -77,7 +86,8 @@ exports.postRegistration = (req, res, next) => {
       return req.user.addToRegister(event);
     })
     .then(result => {
-      res.redirect('/register');
+      req.flash('success' , 'Event Added to Registrations')
+      res.redirect('/events');
     })
     .catch(err => {
       const error = new Error(err);
@@ -241,6 +251,8 @@ exports.getUserProfile = (req, res, next) => {
           name: undefined,
           clgname: undefined,
           dept: undefined,
+          address: undefined,
+          state: undefined,
           phoneNo: undefined
         },
         user: user[0],
@@ -260,6 +272,8 @@ exports.postUserProfile = (req, res, next) => {
   const email = req.body.email;
   const clgname = req.body.clgname;
   const dept = req.body.dept;
+  const address = req.body.address;
+  const state = req.body.state;
   const phoneNo = req.body.phoneNo;
   const errors = validationResult(req);
   console.log(errors.array());
@@ -273,6 +287,8 @@ exports.postUserProfile = (req, res, next) => {
         email: email,
         clgname: clgname,
         dept: dept,
+        address: address,
+        state: state,
         phoneNo: phoneNo
       },
       user: {
@@ -280,6 +296,8 @@ exports.postUserProfile = (req, res, next) => {
         clgname: undefined,
         email: undefined,
         dept: undefined,
+        address: undefined,
+        state: undefined,
         phoneNo: undefined
       },
       validationErrors: errors.array()
@@ -290,6 +308,8 @@ exports.postUserProfile = (req, res, next) => {
       user[0].Name = Name;
       user[0].CollegeName = clgname;
       user[0].Dept = dept;
+      user[0].Address = address;
+      user[0].State = state;
       user[0].PhoneNo = phoneNo;
       return user[0].save().then((result) => {
         console.log("UPDATED User Profile!");

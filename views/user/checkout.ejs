@@ -19,12 +19,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <% events.forEach(e => { %>
+                                    <% events.forEach(e => { %>
+                                        <tr>
                                             <td><%= e.eventId.title %></td>
                                             <td><%= e.eventId.price %></td>
-                                        <% }) %>
-                                    </tr>
+                                        </tr>
+                                    <% }) %>
                                     <tr>
                                         <td class="h4">Total</td>
                                         <td class="h4"><%= totalSum %></td>

@@ -27,6 +27,14 @@ const userSchema = new Schema({
     type: String,
     required: false
   },
+  Address: {
+    type: String,
+    required: false
+  },
+  State: {
+    type: String,
+    required: false
+  },
   PhoneNo: {
     type: Number,
     required: false

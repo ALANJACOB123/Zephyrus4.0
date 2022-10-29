@@ -61,6 +61,24 @@
                             </div>
                             <div class="mb-3">
                                 <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'address') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="address" 
+                                id="address" 
+                                value="<% if (user.Address) { %><%= user.Address %><% } else { %><%= oldInput.Address %><% } %>"
+                                placeholder="Place">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'state') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="state" 
+                                id="state" 
+                                value="<% if (user.State) { %><%= user.State %><% } else { %><%= oldInput.state %><% } %>"
+                                placeholder="State">
+                            </div>
+                            <div class="mb-3">
+                                <input 
                                 class="form-control <%= validationErrors.find(e => e.param === 'phoneNo') ? 'invalid' : '' %>" 
                                 type="text" 
                                 name="phoneNo" 

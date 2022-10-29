@@ -34,7 +34,23 @@ router.post("/admin-reset",[
 
 router.get("/admin-reset/:token", authController.getAdminNewPassword);
 
-router.post("/admin-new-password", authController.postAdminNewPassword);
+router.post("/admin-new-password",[
+  body(
+    'password',
+    'Please enter a password with only numbers and text and at least 5 characters.'
+  )
+    .isLength({ min: 5 })
+    .isAlphanumeric()
+    .trim(),
+  body('confirmPassword')
+    .trim()
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('Passwords have to match!');
+      }
+      return true;
+    })
+], authController.postAdminNewPassword);
 
 router.get("/login", authController.getLogin);
 
@@ -95,7 +111,23 @@ router.post("/reset",[
 
 router.get("/reset/:token", authController.getNewPassword);
 
-router.post("/new-password", authController.postNewPassword);
+router.post("/new-password",[
+  body(
+    'password',
+    'Please enter a password with only numbers and text and at least 5 characters.'
+  )
+    .isLength({ min: 5 })
+    .isAlphanumeric()
+    .trim(),
+  body('confirmPassword')
+    .trim()
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('Passwords have to match!');
+      }
+      return true;
+    })
+], authController.postNewPassword);
 
 // @desc    Auth with Google
 // @route   GET /auth/google
@@ -127,7 +159,13 @@ router.get(
             req.session.userImage = user.image;
             return req.session.save((err) => {
               console.log(err);
-              if(user.Name === undefined && user.CollegeName === undefined && user.Dept === undefined && user.PhoneNo === undefined)
+              if(
+                user.Name === undefined 
+                && user.CollegeName === undefined 
+                && user.Dept === undefined 
+                && user.Address === undefined 
+                && user.State === undefined 
+                && user.PhoneNo === undefined)
               {
                 res.redirect("/user-profile");
               }

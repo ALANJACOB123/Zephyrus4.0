@@ -12,12 +12,12 @@ const Event = require("../models/event");
 const Order = require('../models/order');
 
 
-// exports.getAdminPage = (req, res, next) => {
-//   res.render("admin/zephyrus", {
-//     pageTitle: "Zephyrus",
-//     path: "/",
-//   });
-// };
+exports.getAdminPage = (req, res, next) => {
+  res.render("admin/zephyrus", {
+    pageTitle: "Zephyrus",
+    path: "/",
+  });
+};
 
 exports.getNewAdmin = (req, res, next) => {
   let message = req.flash('error');
@@ -91,6 +91,7 @@ exports.getAddEvent = (req, res, next) => {
 exports.postAddEvent = (req, res, next) => {
   const title = req.body.title;
   const image = req.file;
+  const type = req.body.type;
   const price = req.body.price;
   const description = req.body.description;
   if (!image) {
@@ -102,6 +103,7 @@ exports.postAddEvent = (req, res, next) => {
       event: {
         title: title,
         price: price,
+        type: type,
         description: description
       },
       errorMessage: 'Attached file is not an image.',
@@ -120,6 +122,7 @@ exports.postAddEvent = (req, res, next) => {
         title: title,
         imageUrl: imageUrl,
         price: price,
+        type: type,
         description: description
       },
       errorMessage: errors.array()[0].msg,
@@ -130,6 +133,7 @@ exports.postAddEvent = (req, res, next) => {
   const event = new Event({
     title: title,
     price: price,
+    type: type,
     description: description,
     imageUrl: imageUrl,
   });
@@ -195,6 +199,7 @@ exports.getEditEvent = (req, res, next) => {
 exports.postEditEvent = (req, res, next) => {
   const eventId = req.body.eventId;
   const updatedTitle = req.body.title;
+  const updatedType = req.body.type;
   const updatedPrice = req.body.price;
   const image = req.file;
   const updatedDesc = req.body.description;
@@ -209,6 +214,7 @@ exports.postEditEvent = (req, res, next) => {
       hasError: true,
       event: {
         title: updatedTitle,
+        type: updatedType,
         price: updatedPrice,
         description: updatedDesc,
         _id: eventId
@@ -223,6 +229,7 @@ exports.postEditEvent = (req, res, next) => {
     .then((event) => {
       event.title = updatedTitle;
       event.price = updatedPrice;
+      event.type = updatedType;
       event.description = updatedDesc;
       if (image) {
         fileHelper.deleteFile(event.imageUrl);
