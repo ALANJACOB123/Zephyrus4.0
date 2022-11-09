@@ -1,9 +1,16 @@
 <%- include('includes/head.ejs') %>
+<link rel="stylesheet" href="/css/500.css">
 </head>
 
 <body>
-    <%- include('includes/user-navigation.ejs') %>
-    <h1>Some error occurred!</h1>
-    <p>We're working on fixing this, sorry for the inconvenience!</p>
-
+    <div class="full-screen">
+        <div class='container'>
+          <span class="error-num">5</span>
+          <div class='eye'></div>
+          <div class='eye'></div>
+  
+          <p class="sub-text">Oh eyeballs! Something went wrong. We're <span class="italic">looking</span> to see what happened.</p>
+          <a href="http://localhost:3000/">Go back</a>
+        </div>
+    </div>
 <%- include('includes/end.ejs') %>

@@ -3,6 +3,8 @@
     border-radius: 50%;
 }
 
+/* BackGround Animation 1 */
+
 .area{
     background: #2d2c38;  
     background: -webkit-linear-gradient(to left, #8f94fb, #4e54c8);  
@@ -108,7 +110,9 @@
     animation-duration: 11s;
 }
 
-
+.circles li:hover{
+    background: #2f54cf;
+}
 
 @keyframes animate {
 
@@ -124,4 +128,20 @@
         border-radius: 50%;
     }
 
+}
+
+/* Scroll bar CSS */
+
+::-webkit-scrollbar{
+    width: 10px;
+}
+
+::-webkit-scrollbar-track{
+    background: rgba(0, 0, 0, 0.321);
+    border-radius: 50px;
+}
+
+::-webkit-scrollbar-thumb{
+    background: #3763f4;
+    border-radius: 50px;
 }

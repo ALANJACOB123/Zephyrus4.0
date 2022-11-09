@@ -24,11 +24,12 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'sessions'
 });
+
+
 const csrfProtection = csrf();
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    console.log("Hello");
     cb(null, 'images');
   },
   filename: (req, file, cb) => {
@@ -69,7 +70,13 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(csrfProtection);
+app.use((req, res, next) => {
+  if (req.path === '/callback') {
+    // This skips CSRF - route will be unprotected
+    return next();
+}
+csrfProtection(req, res, next);
+});
 app.use(flash());
 app.use(morgan('dev'));
 
@@ -82,8 +89,13 @@ app.use((req, res, next) => {
   {
     res.locals.name = req.session.user.Name;
   }
-  res.locals.csrfToken = req.csrfToken();
-  next();
+  if (req.path === '/callback'){
+    next();
+  }
+  else{
+    res.locals.csrfToken = req.csrfToken();
+  }
+  next(); 
 });
 
 app.use((req, res, next) => {
@@ -132,10 +144,11 @@ app.use(errorController.get404);
 // });
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(result => {
     app.listen(3000);
   })
   .catch(err => {
     console.log(err);
   });
+  

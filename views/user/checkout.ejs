@@ -1,6 +1,4 @@
 <%- include('../includes/head.ejs') %>
-    <link rel="stylesheet" href="/css/cart.css">
-    
     </head>
 
     <body style="/*background: url(&quot;design.jpg&quot;);*/background-position: 0 -60px;">
@@ -32,17 +30,10 @@
                                 </tbody>
                             </table>
                         </div>
-                        <button id="order-btn" class="btn btn-primary mt-sm-5" type="button">PAY</button>
-                        <script src="https://js.stripe.com/v3/"></script>
-                        <script>
-                            var stripe = Stripe('pk_test_51KzxQjSJVrzWpKlzlD39aLTgxOmOmOG0PW2GfCt63dSqslRq1tEGTJL9TT4H3vV5OYCBZZWeF3EICG7sHF9nEBQg00Mx8z75zw');
-                            var orderBtn = document.getElementById('order-btn');
-                            orderBtn.addEventListener('click', function() {
-                            stripe.redirectToCheckout({
-                                sessionId: '<%= sessionId %>'
-                            });
-                        });
-                        </script>
+                        <form action="/paynow" method="post"> 
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <button class="btn btn-primary mt-sm-5" type="submit">PAY</button>
+                        </form>   
                     </div>
                 </div>
             </div>

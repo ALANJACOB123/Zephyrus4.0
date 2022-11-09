@@ -34,13 +34,19 @@ router.post("/register-delete-event", isAuth.userAuth, userController.postRegist
 
 router.get('/checkout', isAuth.userAuth, userController.getCheckout);
 
+router.post('/paynow', isAuth.userAuth, userController.postPayment);
+
+router.post('/callback', userController.postCallback);
+
 router.get('/checkout/success', userController.getCheckoutSuccess);
 
-router.get('/checkout/cancel', userController.getCheckout);
+// router.get('/checkout/cancel', userController.getCheckout);
 
-router.post('/create-order', isAuth.userAuth, userController.postOrder);
+// router.post('/create-order', isAuth.userAuth, userController.postOrder);
 
 router.get('/orders', isAuth.userAuth, userController.getOrders);
+
+router.get('/order/:userId', userController.getQrOrders);
 
 router.get('/orders/:orderId', isAuth.userAuth, userController.getInvoice);
 

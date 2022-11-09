@@ -4,33 +4,56 @@
 
     <body>
         <%- include('../includes/user-navigation.ejs') %>
-        <main class="section">
-            <% if (events.length > 0) { %>
-                <ul class="cart__item-list">
-                    <% events.forEach(e => {console.log(e) %>
-                        <li class="cart__item">
-                            <h1><%= e.eventId.title %></h1>
-                            <form action="/register-delete-event" method="POST">
-                                <input type="hidden" value="<%= e.eventId._id %>" name="eventId">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <button class="btn danger" type="submit">Delete</button>
-                            </form>
-                        </li>
-                    <% }) %>
-                </ul>
-                <hr>
-                <div class="centered">
-                    <!-- <form action="/create-order" method="POST">
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <button type="submit" class="btn">Order Now!</button>
-                    </form> -->
-                    <a class="btn" href="/checkout">Order Now!</a>
+        <section class="py-5">
+            <div class="container py-5">
+                <div class="row mb-4 mb-lg-5">
+                    <div class="col-md-8 col-xl-6 text-center mx-auto">
+                        <h1 class="fw-bold">Register</h1>
+                        <p class="text-muted w-lg-50">Register for the to win awesome cash prizes!.&nbsp;</p>
+                    </div>
                 </div>
-                
-            <% } else { %>
-                <h1>No Events to Register</h1>
-            <% } %>
-        </main>
+                <% if (events.length > 0) { %>
+                <section>
+                    <div class="container py-5">
+                        <div class="mx-auto" style="max-width: 900px;">
+                            <div class="row row-cols-1 row-cols-md-2 d-flex justify-content-center">
+                                <% events.forEach(e => {%>
+                                <div class="col-md-12 mb-4">
+                                    <div class="card bg-primary-light">
+                                        <div class="card-body text-center px-4 pt-3 pb-1 px-md-5" style="height: auto;padding: 0px;">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h1><%= e.eventId.title %></h1>
+                                                    <p class="text-start">Price - <b><%= e.eventId.price %></b></p>
+                                                </div>
+                                                <form action="/register-delete-event" method="POST">
+                                                    <input type="hidden" value="<%= e.eventId._id %>" name="eventId">
+                                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                        <hr>
+                        <a class="btn btn-primary text-center d-flex justify-content-center align-items-center" type="button" style="width:171px;margin: auto;">Register Now</a>
+                    </div>
+                </section>
+                <% } else { %>
+                    <div class="container">
+                        <div class="row mb-4 mb-lg-5">
+                            <div class="col-md-8 col-xl-6 text-center mx-auto">
+                                <h1>No Events to Register!</h1>
+                                
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </section>
         <%- include('../includes/end.ejs') %>
 
         

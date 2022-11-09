@@ -7,7 +7,7 @@
         <div class="container py-5" style="padding-top: 85px;">
             <div class="row mb-5">
                 <div class="col-md-8 col-xl-6 text-center mx-auto">
-                    <p class="fw-bold text-success mb-2" style="font-size: 40px;">Create Event</p>
+                    <p class="fw-bold text-success mb-2" style="font-size: 40px;"><% if (editing) { %>Edit Event<% } else { %>Create Event<% } %></p>
                     <h2 class="fw-bold" style="font-size: 15px;">Please fill the details below to create a new event</h2>
                     <!-- Error Alert -->
                     <% if (errorMessage) { %>
@@ -57,6 +57,51 @@
                                 id="type" 
                                 value="<% if (editing || hasError) { %><%= event.type %><% } %>"
                                 placeholder="Type">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="teacherName" 
+                                id="teacherName" 
+                                value="<% if (editing || hasError) { %><%= event.teacherName %><% } %>"
+                                placeholder="Teacher in Charge">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                                type="number" 
+                                name="teacherPhone" 
+                                id="teacherPhone" 
+                                value="<% if (editing || hasError) { %><%= event.teacherPhone %><% } %>"
+                                placeholder="Teacher Phone No.">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="studentName" 
+                                id="studentName" 
+                                value="<% if (editing || hasError) { %><%= event.studentName %><% } %>"
+                                placeholder="Student in Charge">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                                type="number" 
+                                name="studentPhone" 
+                                id="studentPhone" 
+                                value="<% if (editing || hasError) { %><%= event.studentPhone %><% } %>"
+                                placeholder="Student Phone No.">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="venue" 
+                                id="venue" 
+                                value="<% if (editing || hasError) { %><%= event.venue %><% } %>"
+                                placeholder="Venue">
                             </div>
                             <div class="mb-3">
                                 <textarea 

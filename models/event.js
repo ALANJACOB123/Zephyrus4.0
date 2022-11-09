@@ -21,7 +21,27 @@ const eventSchema = new Schema({
   },
   type: {
     type: String,
-    required: true,
+    required: false,
+  },
+  teacherName: {
+    type: String,
+    required: false,
+  },
+  teacherPhone: {
+    type: Number,
+    required: false,
+  },
+  studentName: {
+    type: String,
+    required: false,
+  },
+  studentPhone: {
+    type: Number,
+    required: false,
+  },
+  venue: {
+    type: String,
+    required: false,
   },
   registrations: {
     type: Number,

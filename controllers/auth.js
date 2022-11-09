@@ -3,6 +3,7 @@ const crypto = require("crypto");
 
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const ejs = require("ejs");
 const { validationResult } = require('express-validator/check');
 
 const AdminUser = require("../models/admin-user");
@@ -100,7 +101,6 @@ exports.postAdminLogin = (req, res, next) => {
           });
         })
         .catch(err => {
-          console.log(err);
           res.redirect('/admin-login');
         });
     })
@@ -114,7 +114,6 @@ exports.postAdminLogin = (req, res, next) => {
 
 exports.postAdminLogout = (req, res, next) => {
   req.session.destroy((err) => {
-    console.log(err);
     res.redirect("/admin-login");
   });
 };
@@ -150,7 +149,6 @@ exports.postAdminReset = (req, res, next) => {
   }
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
-      console.log(err);
       return res.redirect("/admin-reset");
     }
     const token = buffer.toString("hex");
@@ -171,17 +169,15 @@ exports.postAdminReset = (req, res, next) => {
         user.resetTokenExpiration = Date.now() + 3600000;
         return user.save();
       })
-      .then((result) => {
+      .then( async (result) => {
         req.flash('emailsent', 'Please check your Email for password reset link');
         res.redirect("/admin-login");
+        const data = await ejs.renderFile( "./templates/password-reset.ejs", { name: 'Admin', token : token });
         return transporter.sendMail({
           to: req.body.email,
           from: "alanjacob433@gmail.com",
           subject: "Password reset",
-          html: `
-            <p>You requested a password reset</p>
-            <p>Click this <a href="http://localhost:3000/admin-reset/${token}">link</a> to set a new password.</p>
-          `,
+          html: data,
         });
       })
       .catch((err) => {
@@ -195,7 +191,6 @@ exports.postAdminReset = (req, res, next) => {
 
 exports.getAdminNewPassword = (req, res, next) => {
   let message = req.flash('success');
-  console.log(message);
   if (message.length > 0) {
     message = message[0];
   } else {
@@ -392,7 +387,6 @@ exports.postLogin = (req, res, next) => {
             isAdminLoggedIn = false;
             req.session.user = user;
             return req.session.save((err) => {
-              console.log(err);
               if(user.Name === undefined 
                 && user.CollegeName === undefined 
                 && user.Dept === undefined 
@@ -422,7 +416,6 @@ exports.postLogin = (req, res, next) => {
           });
         })
         .catch(err => {
-          console.log(err);
           res.redirect('/login');
         });
     })
@@ -448,7 +441,6 @@ exports.postGoogleLogin = (req, res, next) => {
           req.session.isLoggedIn = true;
           req.session.user = user;
           return req.session.save((err) => {
-            console.log(err);
             res.redirect("/user-profile");
           });
         }
@@ -508,7 +500,6 @@ exports.postSignup = (req, res, next) => {
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
-    console.log(err);
     res.redirect("/");
   });
 };
@@ -531,6 +522,7 @@ exports.postReset = (req, res, next) => {
   if(email === '@'){
     email = '';
   }
+  let userName = 0;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render('auth/reset', {
@@ -545,7 +537,6 @@ exports.postReset = (req, res, next) => {
   }
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
-      console.log(err);
       return res.redirect("/reset");
     }
     const token = buffer.toString("hex");
@@ -562,21 +553,20 @@ exports.postReset = (req, res, next) => {
             validationErrors: []
           });
         }
+        userName = user.Name;
         user.resetToken = token;
         user.resetTokenExpiration = Date.now() + 3600000;
         return user.save();
       })
-      .then((result) => {
+      .then( async (result) => {
         req.flash('emailsent', 'Please check your Email for password reset link')
         res.redirect("/login");
+        const data = await ejs.renderFile( "./templates/password-reset.ejs", { name: userName, token : token });
         return transporter.sendMail({
           to: req.body.email,
           from: "alanjacob433@gmail.com",
           subject: "Password reset",
-          html: `
-            <p>You requested a password reset</p>
-            <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
-          `,
+          html: data,
         });
       })
       .catch((err) => {
@@ -589,7 +579,6 @@ exports.postReset = (req, res, next) => {
 
 exports.getNewPassword = (req, res, next) => {
   let message = req.flash('success');
-  console.log(message);
   if (message.length > 0) {
     message = message[0];
   } else {

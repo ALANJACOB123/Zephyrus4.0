@@ -94,6 +94,11 @@ exports.postAddEvent = (req, res, next) => {
   const type = req.body.type;
   const price = req.body.price;
   const description = req.body.description;
+  const teacherName = req.body.teacherName;
+  const teacherPhone = req.body.teacherPhone;
+  const studentName = req.body.studentName;
+  const studentPhone = req.body.studentPhone;
+  const venue = req.body.venue;
   if (!image) {
       return res.status(422).render('admin/edit-event', {
       pageTitle: 'Add event',
@@ -104,7 +109,12 @@ exports.postAddEvent = (req, res, next) => {
         title: title,
         price: price,
         type: type,
-        description: description
+        description: description,
+        teacherName: teacherName,
+        teacherPhone: teacherPhone,
+        studentName: studentName,
+        studentPhone: studentPhone,
+        venue: venue
       },
       errorMessage: 'Attached file is not an image.',
       validationErrors: []
@@ -123,7 +133,12 @@ exports.postAddEvent = (req, res, next) => {
         imageUrl: imageUrl,
         price: price,
         type: type,
-        description: description
+        description: description,
+        teacherName: teacherName,
+        teacherPhone: teacherPhone,
+        studentName: studentName,
+        studentPhone: studentPhone,
+        venue: venue
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array()
@@ -136,6 +151,11 @@ exports.postAddEvent = (req, res, next) => {
     type: type,
     description: description,
     imageUrl: imageUrl,
+    teacherName: teacherName,
+    teacherPhone: teacherPhone,
+    studentName: studentName,
+    studentPhone: studentPhone,
+    venue: venue
   });
   event
     .save()
@@ -203,7 +223,11 @@ exports.postEditEvent = (req, res, next) => {
   const updatedPrice = req.body.price;
   const image = req.file;
   const updatedDesc = req.body.description;
-
+  const updatedTeacherName = req.body.teacherName;
+  const updatedTeacherPhone = req.body.teacherPhone;
+  const updatedStudentName = req.body.studentName;
+  const updatedStudentPhone = req.body.studentPhone;
+  const updatedVenue = req.body.venue;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -217,7 +241,12 @@ exports.postEditEvent = (req, res, next) => {
         type: updatedType,
         price: updatedPrice,
         description: updatedDesc,
-        _id: eventId
+        _id: eventId,
+        teacherName: updatedTeacherName,
+        teacherPhone: updatedTeacherPhone,
+        studentName: updatedStudentName,
+        studentPhone: updatedStudentPhone,
+        venue: updatedVenue
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array()
@@ -231,6 +260,11 @@ exports.postEditEvent = (req, res, next) => {
       event.price = updatedPrice;
       event.type = updatedType;
       event.description = updatedDesc;
+      event.teacherName = updatedTeacherName;
+      event.teacherPhone = updatedTeacherPhone;
+      event.studentName = updatedStudentName;
+      event.studentPhone = updatedStudentPhone;
+      event.venue = updatedVenue;
       if (image) {
         fileHelper.deleteFile(event.imageUrl);
         event.imageUrl = image.path;
@@ -355,6 +389,7 @@ exports.getSpotAccess = (req, res, next) => {
     pageTitle: "Spot Access",
     path: "/admin/spot-access",
     errorMessage: message,
+    success: undefined,
     email: undefined,
     oldInput: {
       email: '',
@@ -364,6 +399,7 @@ exports.getSpotAccess = (req, res, next) => {
 };
 
 exports.postSpotAccess = (req, res, next) => {
+  let spot = '';
   const email = req.body.email;
   User.findOne({ email: email })
     .then((user) => {
@@ -372,6 +408,7 @@ exports.postSpotAccess = (req, res, next) => {
           path: '/admin/spot-access',
           pageTitle: 'Spot Access',
           errorMessage: 'Invalid email',
+          success: undefined,
           email: undefined,
           oldInput: {
             email: email,
@@ -380,11 +417,20 @@ exports.postSpotAccess = (req, res, next) => {
         });
       }
       else {
+        if(user.spotAccess){
+          spot = true;
+        }
+        else
+        {
+          spot = false;
+        }
         return res.render("admin/admin-spot-access", {
           pageTitle: "Spot Access",
           path: "/admin/spot-access",
           email: user.email,
           errorMessage: undefined,
+          success: undefined,
+          spot: spot,
           oldInput: {
             email: '',
           },
@@ -395,7 +441,14 @@ exports.postSpotAccess = (req, res, next) => {
 };
 
 exports.postgiveAccess = (req, res, next) => {
-  const spotAccess = req.body.spotAccess;
+  let success = '';
+  let spotAccess = false;
+  if(req.body.spotAccess == undefined) {
+    spotAccess = false
+  }
+  else {
+    spotAccess = true;
+  }
   const email = req.body.email;
   User.findOne({ email: email })
     .then((user) => {
@@ -404,6 +457,7 @@ exports.postgiveAccess = (req, res, next) => {
           path: '/admin/spot-access',
           pageTitle: 'Spot Access',
           errorMessage: 'Invalid email',
+          success: undefined,
           oldInput: {
             email: email,
           },
@@ -411,15 +465,23 @@ exports.postgiveAccess = (req, res, next) => {
         });
       }
       else {
-        req.session.spotAccess = true;
+        req.session.spotAccess = spotAccess;
         req.session.save();
         user.spotAccess = spotAccess;
         user.save().then(result => {
+          if(spotAccess){
+            success = 'Spot Access Granted';
+          }
+          else
+          {
+            success = 'Spot Access Revoked';
+          }
           return res.render("admin/admin-spot-access", {
             pageTitle: "Spot Access",
             path: "/admin/spot-access",
-            email: user.email,
+            email: undefined,
             errorMessage: undefined,
+            success: success,
             oldInput: {
               email: '',
             },
