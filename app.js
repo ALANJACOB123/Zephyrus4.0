@@ -10,6 +10,8 @@ const flash = require('connect-flash');
 const morgan = require('morgan');
 const passport = require('passport');
 const multer = require('multer');
+const helmet = require('helmet');
+const compression = require('compression')
 
 require('./util/passport')(passport)
 
@@ -17,7 +19,7 @@ const errorController = require('./controllers/error');
 const User = require('./models/user');
 const adminUser = require('./models/admin-user');
 
-const MONGODB_URI ="mongodb+srv://alanjacob:Alanandg123@cluster0.7opvu.mongodb.net/Zephyrus";
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.7opvu.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
 
 const app = express();
 const store = new MongoDBStore({
@@ -49,12 +51,16 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
+
+app.use(helmet());
+app.use(compression())
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(multer({ storage: fileStorage, fileFilter: fileFilter  }).single('image'));
@@ -146,7 +152,7 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(result => {
-    app.listen(3000);
+    app.listen(process.env.PORT);
   })
   .catch(err => {
     console.log(err);

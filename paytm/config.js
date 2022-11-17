@@ -1,6 +1,6 @@
 var PaytmConfig = {
-    mid: "IzVtnI39280608871364",
-    key: "1JnCbPGFPJboFBfc",
+    mid: "NfebZe42759735946618",
+    key: "9isla4uc1F#uIuvP",
     website: "WEBSTAGING"
 }
 

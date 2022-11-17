@@ -99,6 +99,8 @@ exports.postAddEvent = (req, res, next) => {
   const studentName = req.body.studentName;
   const studentPhone = req.body.studentPhone;
   const venue = req.body.venue;
+  const active = req.body.active;
+  const date = req.body.date;
   if (!image) {
       return res.status(422).render('admin/edit-event', {
       pageTitle: 'Add event',
@@ -114,7 +116,9 @@ exports.postAddEvent = (req, res, next) => {
         teacherPhone: teacherPhone,
         studentName: studentName,
         studentPhone: studentPhone,
-        venue: venue
+        venue: venue,
+        active: active,
+        date: date,
       },
       errorMessage: 'Attached file is not an image.',
       validationErrors: []
@@ -138,7 +142,9 @@ exports.postAddEvent = (req, res, next) => {
         teacherPhone: teacherPhone,
         studentName: studentName,
         studentPhone: studentPhone,
-        venue: venue
+        venue: venue,
+        active: active,
+        date: date,
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array()
@@ -155,7 +161,9 @@ exports.postAddEvent = (req, res, next) => {
     teacherPhone: teacherPhone,
     studentName: studentName,
     studentPhone: studentPhone,
-    venue: venue
+    venue: venue,
+    active: active,
+    date: date,
   });
   event
     .save()
@@ -228,6 +236,8 @@ exports.postEditEvent = (req, res, next) => {
   const updatedStudentName = req.body.studentName;
   const updatedStudentPhone = req.body.studentPhone;
   const updatedVenue = req.body.venue;
+  const updatedActive = req.body.active;
+  const updatedDate = req.body.date;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -246,7 +256,9 @@ exports.postEditEvent = (req, res, next) => {
         teacherPhone: updatedTeacherPhone,
         studentName: updatedStudentName,
         studentPhone: updatedStudentPhone,
-        venue: updatedVenue
+        venue: updatedVenue,
+        active: updatedActive,
+        date: updatedDate,
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array()
@@ -265,6 +277,8 @@ exports.postEditEvent = (req, res, next) => {
       event.studentName = updatedStudentName;
       event.studentPhone = updatedStudentPhone;
       event.venue = updatedVenue;
+      event.active = updatedActive;
+      event.date = updatedDate;
       if (image) {
         fileHelper.deleteFile(event.imageUrl);
         event.imageUrl = image.path;

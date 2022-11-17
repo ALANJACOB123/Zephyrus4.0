@@ -1,3 +1,4 @@
+const { MongoExpiredSessionError } = require('mongodb');
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
@@ -49,6 +50,11 @@ const userSchema = new Schema({
     type: Boolean,
     default: false
   },
+  group: [
+    {
+      groupMembers: { type: Object, required: false },
+    }
+  ],
   registration: {
     events: [
       {

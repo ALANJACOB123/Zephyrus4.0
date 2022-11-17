@@ -104,6 +104,24 @@
                                 placeholder="Venue">
                             </div>
                             <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                                type="text" 
+                                name="active" 
+                                id="active" 
+                                value="<% if (editing || hasError) { %><%= event.active %><% } %>"
+                                placeholder="Active">
+                            </div>
+                            <div class="mb-3">
+                                <input 
+                                class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                                type="date" 
+                                name="date" 
+                                id="date" 
+                                value="<% if (editing || hasError) { %><%= event.date %><% } %>"
+                                placeholder="Date">
+                            </div>
+                            <div class="mb-3">
                                 <textarea 
                                 class="form-control <%= validationErrors.find(e => e.param === 'description') ? 'invalid' : '' %>" 
                                 name="description" 

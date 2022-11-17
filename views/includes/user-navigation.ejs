@@ -29,9 +29,11 @@
                 <div class="dropdown" style="padding-right: 0px;margin-right: 24px;">
                   <a class="dropdown-toggle" aria-expanded="true" data-bs-toggle="dropdown" href="#">
                     <% if (userImage) { %>
-                      <img class="user-img" src="<%= userImage %>" alt="1" />
+                      <img class="user-img" src="<%= userImage %>" referrerpolicy="no-referrer" alt="1" />
                     <% } else if (name) { %>
                       Welcome, <%= name %>
+                    <% } else { %>
+                      Welcome
                     <% } %>
                   </a>
                     <div class="dropdown-menu" data-bs-popper="none">

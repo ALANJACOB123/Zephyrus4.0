@@ -3,7 +3,70 @@
 
 <body>
     <%- include('../includes/user-navigation.ejs') %>
-    <main>
-      <h1>Welcome all</h1>
-    </main>
+    <section class="py-5">
+      <div class="container py-5">
+          <div class="row mb-4 mb-lg-5">
+              <div class="col-md-8 col-xl-6 text-center mx-auto">
+                  <p class="fw-bold text-success mb-2" style="font-size: 40px;color: rgb(25, 245, 170);">Spot Registration</p>
+                  <h2 class="fw-bold" style="font-size: 15px;">Register for the events using out spot registration facility</h2>
+                  <!-- Error Alert -->
+                  <% if (errorMessage) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" style="margin-right: 120px;margin-left: 120px;">
+                        <strong>Error!</strong> <%= errorMessage %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                  <% } %>
+                  <% if (success) { %>
+                    <div class="alert alert-success alert-dismissible fade show" style="margin-right: 57px;margin-left: 57px;">
+                        <strong>Success!</strong> <%= success %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <% } %>
+              </div>
+          </div>
+          <div class="row d-flex justify-content-center">
+              <div class="col-md-6 col-xl-4">
+                  <div class="card">
+                      <div class="card-body text-center d-flex flex-column align-items-center" style="margin-top: -28px;">
+                          <form method="post" action="/spot-registration">
+                              <div class="mb-3">
+                                  <input 
+                                  class="form-control <%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>" 
+                                  type="email"
+                                  name="email" 
+                                  id="email" 
+                                  value="<%= oldInput.email %>"
+                                  placeholder="Email">  
+                              </div>
+                              <div class="mb-3">
+                                <p class="fw-bold text-start mb-2" style="font-size: 30px;color: rgb(25, 245, 170);">Events</p>
+                              </div>
+                              <% for (let event of events) { %>
+                              <div class="mb-3">
+                                <div class="form-check">
+                                  <input class="form-check-input" name="eventId" type="checkbox" id="formCheck-1" value="<%= event._id %>">
+                                  <label class="form-check-label" for="formCheck-1"><%= event.title %></label>
+                                </div>
+                              </div>
+                              <% } %>
+                              <div class="mb-3">
+                                <p class="fw-bold text-start mb-2" style="font-size: 30px;color: rgb(25, 245, 170);">Payment</p>
+                              </div>
+                              <div class="mb-3">
+                                <div class="form-check">
+                                  <input class="form-check-input" name="paymentDone" type="checkbox" id="formCheck-1" value="true">
+                                  <label class="form-check-label" for="formCheck-1">Recieved</label>
+                                </div>
+                              </div>
+                              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                              <div class="mb-3">
+                                  <button class="btn btn-primary shadow d-block w-100" type="submit">Register</button>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
 <%- include('../includes/end.ejs') %>

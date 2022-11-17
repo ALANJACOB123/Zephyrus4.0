@@ -2,9 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https')
 const qs = require('querystring')
+const mongoose = require('mongoose');
 
-const PDFDocument = require('pdfkit');
 const qrcode = require('qrcode');
+var pdf = require('html-pdf');
 const { validationResult } = require('express-validator/check');
 const nodemailer = require("nodemailer");
 const ejs = require("ejs");
@@ -13,8 +14,8 @@ const config = require('../paytm/config');
 
 const Event = require('../models/event');
 const Order = require('../models/order');
+const Spot = require('../models/spot');
 const User = require("../models/user");
-const { events } = require('../models/event');
 
 let transporter = nodemailer.createTransport({
   host: "smtp.zoho.in",
@@ -103,22 +104,45 @@ exports.postRegistration = (req, res, next) => {
     .then((orders) => {
       if(!(orders == ''))
       {
-        orders[0].events.forEach((event) => {
-          if(event.event._id == eventId){
-            global.f = 1
-            req.flash('success' , 'Event Already Registered');
-            res.redirect('/events');
-          }
+        orders.forEach((order) => {
+          order.events.forEach((event) => {
+            if(event.event._id == eventId){
+              global.f = 1
+              req.flash('success' , 'Event Already Registered');
+              res.redirect('/events');
+            }
+          })
         })
       }
       if(f === 0){
         Event.findById(eventId)
         .then((event) => {
-          return req.user.addToRegister(event);
-        })
-        .then(result => {
-          req.flash('success' , 'Event Added to Registrations');
-          res.redirect('/events');
+          if(event.type === 'Group')
+          {
+            res.render('user/group-member', {
+              path: '/add-group',
+              pageTitle: 'Add Group Members',
+              oldInput: {
+                candidate1Name: undefined,
+                candidate1Phone: undefined,
+                candidate2Name: undefined,
+                candidate2Phone: undefined,
+                candidate3Name: undefined,
+                candidate3Phone: undefined,
+                candidate4Name: undefined,
+                candidate4Phone: undefined,
+              },
+              eventId: eventId,
+              errorMessage: null,
+              validationErrors: []
+            });
+          }
+          else
+          {
+            req.user.addToRegister(event);
+            req.flash('success' , 'Event Added to Registrations');
+            res.redirect('/events');
+          }
         })
         .catch(err => {
           const error = new Error(err);
@@ -357,7 +381,6 @@ exports.getCheckoutSuccess = (req, res, next) => {
       .sort({created_at: -1})
       .exec(async (err, post) => {
         const input_text = `http://localhost:3000/order/${req.user._id}`
-        console.log(input_text);
         let img = await qrcode.toDataURL(input_text);
         const data = await ejs.renderFile( "./templates/receipt.ejs", { name: req.user.Name, date: today, events: Allevents, total: total, orderId: post._id , src: img});
           return transporter.sendMail({
@@ -379,13 +402,21 @@ exports.getCheckoutSuccess = (req, res, next) => {
 
 exports.getQrOrders = (req, res, next) => {
   const userId = req.params.userId;
-  Order.find({ 'user.userId': userId })
-    .then(orders => {
-      console.log(orders)
-      res.render('user/orders', {
-        path: '/orders',
-        pageTitle: 'Your Orders',
-        orders: orders,
+  User.findById(userId)
+    .then((user) => {
+      Order.find({ 'user.userId': userId })
+      .then(orders => {
+        res.render('user/orders', {
+          path: '/orders',
+          pageTitle: 'Your Orders',
+          orders: orders,
+          name: user.Name
+        });
+      })
+      .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
       });
     })
     .catch(err => {
@@ -402,6 +433,7 @@ exports.getOrders = (req, res, next) => {
         path: '/orders',
         pageTitle: 'Your Orders',
         orders: orders,
+        name: req.user.Name
       });
     })
     .catch(err => {
@@ -496,69 +528,259 @@ exports.postUserProfile = (req, res, next) => {
 };
 
 exports.getInvoice = (req, res, next) => {
+  let total = 0;
   const orderId = req.params.orderId;
   Order.findById(orderId)
-    .then(order => {
+    .then(async (order) => {
       if (!order) {
         return next(new Error('No order found.'));
       }
       if (order.user.userId.toString() !== req.user._id.toString()) {
         return next(new Error('Unauthorized'));
       }
+      order.events.forEach(e => {
+        total += e.quantity * e.event.price;
+      });
+
+      var today = new Date(Date.parse(order.created_at));
+      var dd = String(today.getDate()).padStart(2, '0');
+      var mm = String(today.getMonth() + 1).padStart(2, '0');
+      var yyyy = today.getFullYear();
+      today = mm + '/' + dd + '/' + yyyy;
+
       const invoiceName = 'invoice-' + orderId + '.pdf';
       const invoicePath = path.join('data', 'invoices', invoiceName);
-      const pdfDoc = new PDFDocument();
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader(
         'Content-Disposition',
-        'attachment; filename="' + invoiceName + '"'
+        'inline; filename="' + invoiceName + '"'
       );
-      pdfDoc.pipe(fs.createWriteStream(invoicePath));
-      pdfDoc.pipe(res);
-
-      pdfDoc.fontSize(26).text('Invoice', {
-        underline: true
+      let file
+      const data = await ejs.renderFile( "./templates/receipt-template.ejs", { name: req.user.Name, date: today, events: order.events, total: total, orderId: order._id});
+      pdf.create(data).toFile(invoicePath,function(err, res){
+          console.log("PDF Created");
       });
-      pdfDoc.text('-----------------------');
-      let totalPrice = 0;
-      order.events.forEach(e => {
-        totalPrice += e.quantity * e.event.price;
-        pdfDoc
-          .fontSize(14)
-          .text(
-            e.event.title +
-            ' - ' +
-            e.quantity +
-            ' x ' +
-            '$' +
-            e.event.price
-          );
-      });
-      pdfDoc.text('---');
-      pdfDoc.fontSize(20).text('Total Price: $' + totalPrice);
-
-      pdfDoc.end();
-      // fs.readFile(invoicePath, (err, data) => {
-      //   if (err) {
-      //     return next(err);
-      //   }
-      //   res.setHeader('Content-Type', 'application/pdf');
-      //   res.setHeader(
-      //     'Content-Disposition',
-      //     'inline; filename="' + invoiceName + '"'
-      //   );
-      //   res.send(data);
-      // });
-      // const file = fs.createReadStream(invoicePath);
-
-      // file.pipe(res);
+      file = fs.createReadStream(invoicePath);
+      file.pipe(res);
     })
     .catch(err => next(err));
 };
 
-exports.getSpotRegistrationsPage = (req, res, next) => {
-  res.render("user/spot-registration", {
-    pageTitle: "Spot Registration",
-    path: "/spot-registration",
-  });
+exports.getEventBrochure = (req, res, next) => {
+  const eventTitle = req.params.eventTitle;
+    const BrochureName = eventTitle + '.pdf';
+    const BrochurePath = path.join('public', 'brochures', BrochureName);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename="' + BrochureName + '"'
+    );
+    const file = fs.createReadStream(BrochurePath);
+
+    file.pipe(res);
 };
+
+exports.getSpotRegistrationsPage = (req, res, next) => {
+  let message = req.flash('success');
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  Event.find()
+    .then((events) => {
+      res.render("user/spot-registration", {
+        pageTitle: "Spot Registration",
+        path: "/spot-registration",
+        validationErrors: [],
+        errorMessage: undefined,
+        oldInput: {
+          email: ''
+        },
+        events: events,
+        success: message,
+      });
+    })
+};
+
+exports.postSpotRegistrationsPage = (req, res, next) => {
+  let email = req.body.email;
+  if(email === '@'){ 
+    email = '';
+  }
+  const eventsId = req.body.eventId;
+  const paymentDone = req.body.paymentDone;
+  let events = [];
+  for(let eventId of eventsId)
+  {
+    Event.findById(eventId)
+      .then((event) => {
+          let Event = {event}
+          events.push(Event)
+      })
+  }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+  Event.find()
+    .then((events) => {
+        return res.status(422).render('user/spot-registration', {
+          path: '/spot-registration',
+          pageTitle: 'Spot Registration',
+          errorMessage: errors.array()[0].msg,
+          events: events,
+          oldInput: {
+            email: email,
+          },
+          validationErrors: errors.array(),
+          message: undefined
+        });
+    })
+  }
+  User.find({email: email})
+    .then((user) => {
+      if (user == '') {
+        Event.find()
+        .then((events) => {
+            return res.status(422).render('user/spot-registration', {
+              path: '/spot-registration',
+              pageTitle: 'Spot Registration',
+              errorMessage: 'Invalid email or password.',
+              oldInput: {
+                email: email,
+              },
+              events: events,
+              validationErrors: [],
+              success: undefined
+            });
+        })
+      }
+    })
+    .then(() =>{
+      if(eventsId === undefined){
+        Event.find()
+        .then((events) => {
+            return res.status(422).render('user/spot-registration', {
+              path: '/spot-registration',
+              pageTitle: 'Spot Registration',
+              errorMessage: 'Please select the events to register',
+              oldInput: {
+                email: email,
+              },
+              events: events,
+              validationErrors: [],
+              message: undefined
+            });
+        })
+      }
+      else {
+        User.find({email: email})
+        .then((user) => {
+          events.forEach(e => {
+            Event.find({ _id: e.event._id })
+              .then(event => {
+                event[0].registrations = event[0].registrations + 1;
+                event[0].addTheUser(user[0]);
+              })
+          })
+          const spot = new Spot({
+            user: {
+              email: user[0].email,
+              userId: user[0]._id,
+            },
+            paymentDone: paymentDone,
+            events: events,
+            created_at : Date.now()
+          });
+          spot.save();
+        })
+        .then(() => {
+          req.flash('success', 'Spot Registration Was Successfull!')
+          res.redirect('/spot-registration')
+        })
+      }
+    })
+};
+
+exports.getGroupMemberPage = (req, res, next) => {
+  User.find({ _id: req.user._id })
+    .then((user) => {
+      if (!user) {
+        return res.redirect("/");
+      }
+      res.render('user/group-member', {
+        path: '/add-group',
+        pageTitle: 'Add Group Members',
+        oldInput: {
+          candidate1Name: undefined,
+          candidate1Phone: undefined,
+          candidate2Name: undefined,
+          candidate2Phone: undefined,
+          candidate3Name: undefined,
+          candidate3Phone: undefined,
+          candidate4Name: undefined,
+          candidate4Phone: undefined,
+        },
+        errorMessage: null,
+        validationErrors: []
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+}
+
+exports.postGroupMemberPage = (req, res, next) => {
+  const groupMembers = {
+    candidate1Name: req.body.candidate1Name,
+    candidate1Phone: req.body.candidate1Phone,
+    candidate2Name: req.body.candidate2Name,
+    candidate2Phone: req.body.candidate2Phone,
+    candidate3Name: req.body.candidate3Name,
+    candidate3Phone: req.body.candidate3Phone,
+    candidate4Name: req.body.candidate4Name,
+    candidate4Phone: req.body.candidate4Phone,
+  }
+  const group = [{groupMembers}]
+  const eventId = req.body.eventId;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('user/group-member', {
+      pageTitle: 'Add Group Members',
+      path: '/add-group',
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        candidate1Name: groupMembers.candidate1Name,
+        candidate1Phone: groupMembers.candidate1Phone,
+        candidate2Name: groupMembers.candidate2Name,
+        candidate2Phone: groupMembers.candidate2Phone,
+        candidate3Name: groupMembers.candidate3Name,
+        candidate3Phone: groupMembers.candidate3Phone,
+        candidate4Name: groupMembers.candidate4Name,
+        candidate4Phone: groupMembers.candidate4Phone,
+      },
+      eventId: req.body.eventId,
+      validationErrors: errors.array()
+    });
+  }
+  User.find({ _id: req.user._id })
+    .then((user) => {
+      return user[0].updateOne({$push : { group: group }}).then((result) => {
+        console.log("UPDATED User Profile!");
+      });
+    })
+    .then(() => {
+      Event.findById(eventId)
+        .then((event) => {
+            req.user.addToRegister(event);
+            req.flash('success' , 'Event Added to Registrations');
+            res.redirect('/events');
+          })
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+}

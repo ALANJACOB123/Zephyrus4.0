@@ -50,6 +50,43 @@ router.get('/order/:userId', userController.getQrOrders);
 
 router.get('/orders/:orderId', isAuth.userAuth, userController.getInvoice);
 
+router.get('/event/:eventTitle', isAuth.userAuth, userController.getEventBrochure);
+
 router.get('/spot-registration', isAuth.userAuth, userController.getSpotRegistrationsPage);
+
+router.post('/spot-registration',[
+  check('email')
+    .isEmail()
+    .withMessage('Please enter a valid email.')
+    .normalizeEmail(),
+  check('paymentDone')
+    .isIn(['true'])
+    .withMessage('Please check the Payment received option.')
+], isAuth.userAuth, userController.postSpotRegistrationsPage);
+
+router.get('/add-group', isAuth.userAuth, userController.getGroupMemberPage);
+
+router.post('/add-group',[
+  check('candidate1Name').not().isEmpty().withMessage('Please Enter a valid Name'),
+  body('candidate1Phone', 'Please Enter a valid Phone Number')
+      .exists()
+      .isMobilePhone()
+      .trim(),
+  check('candidate2Name').not().isEmpty().withMessage('Please Enter a valid Name'),
+  body('candidate2Phone', 'Please Enter a valid Phone Number')
+      .exists()
+      .isMobilePhone()
+      .trim(),
+  check('candidate3Name').not().isEmpty().withMessage('Please Enter a valid Name'),
+  body('candidate3Phone', 'Please Enter a valid Phone Number')
+      .exists()
+      .isMobilePhone()
+      .trim(),
+  check('candidate4Name').not().isEmpty().withMessage('Please Enter a valid Name'),
+  body('candidate4Phone', 'Please Enter a valid Phone Number')
+      .exists()
+      .isMobilePhone()
+      .trim(),
+], isAuth.userAuth, userController.postGroupMemberPage);
 
 module.exports = router;

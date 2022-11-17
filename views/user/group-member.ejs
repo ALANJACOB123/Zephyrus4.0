@@ -1,0 +1,108 @@
+<%- include('../includes/head.ejs') %>
+</head>
+
+<body style="/*background: url(&quot;design.jpg&quot;);*/background-position: 0 -60px;">
+  <%- include('../includes/user-navigation.ejs') %>
+  <section class="py-5">
+    <div class="container py-5" style="margin-top: 1px;padding-top: 0px;">
+        <div class="row mb-5">
+            <div class="col-md-8 col-xl-6 text-center mx-auto">
+                <p class="fw-bold text-success mb-2" style="margin-bottom: 26px;padding-bottom: 0px;padding-top: 0px; font-size:40px;">Team Profile</p>
+                <h3 class="fw-bold">Please fill your group details below</h3>
+                <!-- Error Alert -->
+                <% if (errorMessage) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" style="margin-right: 120px;margin-left: 120px;">
+                        <strong>Error!</strong> <%= errorMessage %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-6 col-xl-4">
+                <div>
+                    <form class="p-3 p-xl-4" action="/add-group" method="POST">
+                        <div class="mb-3">
+                            <input 
+                            class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                            type="text" 
+                            name="candidate1Name" 
+                            id="candidate1Name" 
+                            value="<%= oldInput.candidate1Name %>"
+                            placeholder="Candidate Name">
+                        </div>
+                        <div class="mb-3">
+                            <input 
+                            class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                            type="number" 
+                            name="candidate1Phone" 
+                            id="candidate1Phone" 
+                            value="<%= oldInput.candidate1Phone %>"
+                            placeholder="Candidate Phone No.">
+                        </div>
+                        <div class="mb-3">
+                            <input 
+                            class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                            type="text" 
+                            name="candidate2Name" 
+                            id="candidate2Name" 
+                            value="<%= oldInput.candidate2Name %>"
+                            placeholder="Candidate Name">
+                        </div>
+                        <div class="mb-3">
+                            <input 
+                            class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                            type="number" 
+                            name="candidate2Phone" 
+                            id="candidate2Phone" 
+                            value="<%= oldInput.candidate2Phone %>"
+                            placeholder="Candidate Phone No.">
+                        </div>
+                        <div class="mb-3">
+                            <input 
+                            class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                            type="text" 
+                            name="candidate3Name" 
+                            id="candidate3Name" 
+                            value="<%= oldInput.candidate3Name %>"
+                            placeholder="Candidate Name">
+                        </div>
+                        <div class="mb-3">
+                            <input 
+                            class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                            type="number" 
+                            name="candidate3Phone" 
+                            id="candidate3Phone" 
+                            value="<%= oldInput.candidate3Phone %>"
+                            placeholder="Candidate Phone No.">
+                        </div>
+                        <div class="mb-3">
+                            <input 
+                            class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                            type="text" 
+                            name="candidate4Name" 
+                            id="candidate4Name" 
+                            value="<%= oldInput.candidate4Name %>"
+                            placeholder="Candidate Name">
+                        </div>
+                        <div class="mb-3">
+                            <input 
+                            class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                            type="number" 
+                            name="candidate4Phone" 
+                            id="candidate4Phone" 
+                            value="<%= oldInput.candidate4Phone %>"
+                            placeholder="Candidate Phone No.">
+                        </div>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <input type="hidden" name="eventId" value="<%= eventId %>">
+                        <div>
+                            <button class="btn btn-primary shadow d-block w-100" type="submit">Save & Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<%- include('../includes/end.ejs') %>

@@ -41,7 +41,8 @@ router.get("/add-event", isAuth.adminAuth, adminController.getAddEvent);
 router.get("/events", isAuth.adminAuth, adminController.getEvents);
 
 // /admin/add-product => POST
-router.post("/add-event", [
+router.post("/add-event",
+  [
   body('title')
     .isString()
     .isLength({ min: 3 })

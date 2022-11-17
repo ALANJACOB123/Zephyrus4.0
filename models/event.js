@@ -43,6 +43,14 @@ const eventSchema = new Schema({
     type: String,
     required: false,
   },
+  date: {
+    type: String,
+    required: false,
+  },
+  active: {
+    type: Boolean,
+    required: false,
+  },
   registrations: {
     type: Number,
     required: false,
