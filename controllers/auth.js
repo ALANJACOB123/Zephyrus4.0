@@ -14,8 +14,8 @@ let transporter = nodemailer.createTransport({
   secure: true,
   port: 465,
   auth: {
-    user: "alanjacob433@zohomail.in",
-    pass: "7AUisiV3cNXg"
+    user: `${process.env.MAIL_USERNAME}`,
+    pass: `${process.env.MAIL_PASSWORD}`
   },
 });
 

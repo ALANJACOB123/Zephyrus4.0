@@ -10,6 +10,7 @@ const UserAdmin = require("../models/admin-user");
 const User = require("../models/user");
 const Event = require("../models/event");
 const Order = require('../models/order');
+const Spot = require('../models/spot');
 
 
 exports.getAdminPage = (req, res, next) => {
@@ -319,8 +320,9 @@ exports.postDeleteEvent = (req, res, next) => {
 exports.getRegistrations = async (req, res, next) => {
   const docCountUser = await User.countDocuments({}).exec();
   const docCountOrder = await Order.countDocuments({}).exec();
+  const docCountSpot = await Spot.countDocuments({}).exec();
   User.find().then(user => {
-    const fields = ['Name', 'email'];
+    const fields = ['Name', 'email', 'Address', 'CollegeName', 'Dept', 'State', 'PhoneNo'];
     const opts = { fields };
     try {
       const csv = parse(user, opts);
@@ -329,7 +331,9 @@ exports.getRegistrations = async (req, res, next) => {
         console.log("Write Successfully!");
       });
     } catch(err) {
-      console.error(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     }
   });
   Event.find()
@@ -341,7 +345,7 @@ exports.getRegistrations = async (req, res, next) => {
             if(user.registration.users[0] !== undefined ) 
             {
               const users = user.registration.users[0].userId;
-              const fields = ['Name', 'email'];
+              const fields = ['Name', 'email', 'Address', 'CollegeName', 'Dept', 'State', 'PhoneNo'];
               const opts = { fields };
               try {
                 const csv = parse(users, opts);
@@ -349,7 +353,9 @@ exports.getRegistrations = async (req, res, next) => {
                   if (err) throw err;
                 });
               } catch (err) {
-              console.error(err);
+                const error = new Error(err);
+                error.httpStatusCode = 500;
+                return next(error);
             }
             }
           })
@@ -357,6 +363,7 @@ exports.getRegistrations = async (req, res, next) => {
       res.render("admin/admin-registrations", {
         totalUsers: docCountUser,
         totalOrders: docCountOrder,
+        totalSpot: docCountSpot,
         events: events,
         pageTitle: "Registrations",
         path: "/admin/registrations",
@@ -452,6 +459,11 @@ exports.postSpotAccess = (req, res, next) => {
         });
       }
     })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postgiveAccess = (req, res, next) => {
@@ -504,4 +516,9 @@ exports.postgiveAccess = (req, res, next) => {
         })
       }
     })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };

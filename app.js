@@ -1,4 +1,5 @@
 const path = require('path');
+require('dotenv').config();
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -10,8 +11,8 @@ const flash = require('connect-flash');
 const morgan = require('morgan');
 const passport = require('passport');
 const multer = require('multer');
-const helmet = require('helmet');
 const compression = require('compression')
+
 
 require('./util/passport')(passport)
 
@@ -59,7 +60,6 @@ const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 
-app.use(helmet());
 app.use(compression())
 
 app.use(bodyParser.urlencoded({ extended: false }));

@@ -3,27 +3,85 @@
 
 <body style="/*background: url(&quot;design.jpg&quot;);*/background-position: 0 -60px;">
     <%- include('../includes/admin-navigation.ejs') %>
-    <main>
-      <div class="grid">
-        <h1>Registrations : <%=totalUsers %><a href="/admin/registrations/download">Download</a></h1>
-        <h1>Registrations with payment : <%=totalOrders %></h1>
-                        <% for (let event of events) { %>
-                            <article class="card product-item">
-                                <header class="card__header">
-                                    <h1 class="product__title">
-                                        <%=event.title %>
-                                    </h1>
-                                </header>
-                                <div class="card__content">
-                                    <h2 class="product__price">
-                                        <%= event.registrations %>
-                                    </h2>
-                                </div>
-                                <% if (event.registrations > 0) 
-                                { %><a href="/admin/registrations/<%= event.title %>">Download</a> <% } %> 
-                            </article>
-                            <% } %>
-                    </div>
-    </main>
-    
+      <section class="py-3">
+        <div class="container py-5">
+            <div class="row mb-4 mb-lg-5">
+                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                    <h1 class="fw-bold">Registrations</h1>
+                    <p class="text-muted w-lg-50">Find all the information about all the registrations with Zephyrus4.0.&nbsp;</p>
+                </div>
+            </div>
+            <div class="row mx-auto" style="/*max-width: 700px;*/">
+                <div class="col">
+                    <section class="py-2">
+                        <div class="container py-2">
+                            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                                    <div class="col-md-4 pb-4">
+                                        <div class="card bg-dark text-white">
+                                            <div class="card-header h4 border-bottom border-light">Registrations</div>
+                                            <div class="card-body">
+                                              <h5 class="card-title">Total Registrations - <%=totalUsers %></h5>
+                                              <hr>
+                                              <a style="font-size: 20px;color: rgb(25, 245, 170);" href="/admin/registrations/download">Download</a> 
+                                          </div>
+                                        </div>
+                                      </div>
+                                    <div class="col-md-4 pb-4">
+                                        <div class="card bg-dark text-white">
+                                            <div class="card-header h4 border-bottom border-light">Registratinons</div>
+                                            <div class="card-body">
+                                              <h5 class="card-title">With Payments - <%=totalOrders %></h5>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card bg-dark text-white">
+                                            <div class="card-header h4 border-bottom border-light">Registratinons</div>
+                                            <div class="card-body">
+                                              <h5 class="card-title">Spot Registrations - <%=totalSpot %></h5>
+                                          </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </section>
+      <section class="">
+        <div class="container py-5">
+            <div class="row mb-4 mb-lg-5">
+                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                    <h1 class="fw-bold">Events</h1>
+                    <p class="text-muted w-lg-50">Find all the information about the events and its registrations.&nbsp;</p>
+                </div>
+            </div>
+            <div class="row mx-auto" style="/*max-width: 700px;*/">
+                <div class="col">
+                    <section class="py-2">
+                        <div class="container py-2">
+                            <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
+                                <% for (let event of events) { %>
+                                <div class="col-md-4">
+                                    <div class="card bg-dark text-white">
+                                        <div class="card-header h4 border-bottom border-light"><%=event.title %></div>
+                                        <div class="card-body">
+                                          <h5 class="card-title">Registrations - <%= event.registrations %></h5>
+                                          <hr>
+                                          <% if (event.registrations > 0) 
+                                          { %>
+                                            <a style="font-size: 20px;color: rgb(25, 245, 170);" href="/admin/registrations/<%= event.title %>">Download</a> 
+                                          <% } %> 
+                                      </div>
+                                    </div>
+                                  </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </section>
 <%- include('../includes/end.ejs') %>

@@ -1,7 +1,7 @@
 var PaytmConfig = {
-    mid: "NfebZe42759735946618",
-    key: "9isla4uc1F#uIuvP",
-    website: "WEBSTAGING"
+    mid: `${process.env.mid}`,
+    key: `${process.env.key}`,
+    website: `${process.env.website}`
 }
 
 module.exports.paytmConfig = PaytmConfig
