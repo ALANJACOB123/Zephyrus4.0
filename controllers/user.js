@@ -1,20 +1,20 @@
-const fs = require('fs');
-const path = require('path');
-const https = require('https')
-const qs = require('querystring')
-const mongoose = require('mongoose');
+const fs = require("fs");
+const path = require("path");
+const https = require("https");
+const qs = require("querystring");
+const mongoose = require("mongoose");
 
-const qrcode = require('qrcode');
-var pdf = require('html-pdf');
-const { validationResult } = require('express-validator/check');
+const qrcode = require("qrcode");
+var pdf = require("html-pdf");
+const { validationResult } = require("express-validator/check");
 const nodemailer = require("nodemailer");
 const ejs = require("ejs");
-const checksum_lib = require('../paytm/cheksum')
-const config = require('../paytm/config');
+const checksum_lib = require("../paytm/cheksum");
+const config = require("../paytm/config");
 
-const Event = require('../models/event');
-const Order = require('../models/order');
-const Spot = require('../models/spot');
+const Event = require("../models/event");
+const Order = require("../models/order");
+const Spot = require("../models/spot");
 const User = require("../models/user");
 
 let transporter = nodemailer.createTransport({
@@ -23,13 +23,13 @@ let transporter = nodemailer.createTransport({
   port: 465,
   auth: {
     user: `${process.env.MAIL_USERNAME}`,
-    pass: `${process.env.MAIL_PASSWORD}`
+    pass: `${process.env.MAIL_PASSWORD}`,
   },
 });
 
 exports.getPage = (req, res, next) => {
-  let message = req.flash('error');
-  let emailsent = req.flash('success')
+  let message = req.flash("error");
+  let emailsent = req.flash("success");
   if (message.length > 0) {
     message = message[0];
   } else {
@@ -46,22 +46,19 @@ exports.getPage = (req, res, next) => {
     errorMessage: message,
     success: emailsent,
     oldInput: {
-      email: '',
-      name: '',
-      message: ''
+      email: "",
+      name: "",
+      message: "",
     },
-    validationErrors: []
-    });
+    validationErrors: [],
+  });
 };
 
 exports.getEvents = (req, res, next) => {
-  let message = req.flash('success');
-  if(message.length > 0)
-  {
+  let message = req.flash("success");
+  if (message.length > 0) {
     message = message[0];
-  }
-  else
-  {
+  } else {
     message = null;
   }
   console.log(message);
@@ -71,7 +68,7 @@ exports.getEvents = (req, res, next) => {
         events: events,
         pageTitle: "All Events",
         path: "/events",
-        success: message
+        success: message,
       });
     })
     .catch((err) => {
@@ -100,17 +97,17 @@ exports.getEvent = (req, res, next) => {
 
 exports.getRegistration = (req, res, next) => {
   req.user
-    .populate('registration.events.eventId')
+    .populate("registration.events.eventId")
     .execPopulate()
-    .then(user => {
+    .then((user) => {
       const events = user.registration.events;
-      res.render('user/registration', {
-        path: '/register',
-        pageTitle: 'Your Events',
+      res.render("user/registration", {
+        path: "/register",
+        pageTitle: "Your Events",
         events: events,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -118,60 +115,56 @@ exports.getRegistration = (req, res, next) => {
 };
 
 exports.postRegistration = (req, res, next) => {
-  global.f = 0
+  global.f = 0;
   const eventId = req.body.eventId;
-  Order.find({'user.userId' : req.user._id})
+  Order.find({ "user.userId": req.user._id })
     .then((orders) => {
-      if(!(orders == ''))
-      {
+      if (!(orders == "")) {
         orders.forEach((order) => {
           order.events.forEach((event) => {
-            if(event.event._id == eventId){
-              global.f = 1
-              req.flash('success' , 'Event Already Registered');
-              res.redirect('/events');
+            if (event.event._id == eventId) {
+              global.f = 1;
+              req.flash("success", "Event Already Registered");
+              res.redirect("/events");
             }
-          })
-        })
-      }
-      if(f === 0){
-        Event.findById(eventId)
-        .then((event) => {
-          if(event.type === 'Group')
-          {
-            res.render('user/group-member', {
-              path: '/add-group',
-              pageTitle: 'Add Group Members',
-              oldInput: {
-                candidate1Name: undefined,
-                candidate1Phone: undefined,
-                candidate2Name: undefined,
-                candidate2Phone: undefined,
-                candidate3Name: undefined,
-                candidate3Phone: undefined,
-                candidate4Name: undefined,
-                candidate4Phone: undefined,
-              },
-              eventId: eventId,
-              errorMessage: null,
-              validationErrors: []
-            });
-          }
-          else
-          {
-            req.user.addToRegister(event);
-            req.flash('success' , 'Event Added to Registrations');
-            res.redirect('/events');
-          }
-        })
-        .catch(err => {
-          const error = new Error(err);
-          error.httpStatusCode = 500;
-          return next(error);
+          });
         });
       }
+      if (f === 0) {
+        Event.findById(eventId)
+          .then((event) => {
+            if (event.type === "Group") {
+              res.render("user/group-member", {
+                path: "/add-group",
+                pageTitle: "Add Group Members",
+                oldInput: {
+                  candidate1Name: undefined,
+                  candidate1Phone: undefined,
+                  candidate2Name: undefined,
+                  candidate2Phone: undefined,
+                  candidate3Name: undefined,
+                  candidate3Phone: undefined,
+                  candidate4Name: undefined,
+                  candidate4Phone: undefined,
+                },
+                eventId: eventId,
+                errorMessage: null,
+                validationErrors: [],
+              });
+            } else {
+              req.user.addToRegister(event);
+              req.flash("success", "Event Added to Registrations");
+              res.redirect("/events");
+            }
+          })
+          .catch((err) => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+          });
+      }
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -182,10 +175,10 @@ exports.postRegisterDeleteEvent = (req, res, next) => {
   const eventId = req.body.eventId;
   req.user
     .removeFromRegister(eventId)
-    .then(result => {
-      res.redirect('/register');
+    .then((result) => {
+      res.redirect("/register");
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -196,24 +189,24 @@ exports.getCheckout = (req, res, next) => {
   let events;
   let total = 0;
   req.user
-    .populate('registration.events.eventId')
+    .populate("registration.events.eventId")
     .execPopulate()
-    .then(user => {
+    .then((user) => {
       events = user.registration.events;
       total = 0;
-      events.forEach(e => {
+      events.forEach((e) => {
         total += e.quantity * e.eventId.price;
       });
     })
     .then(() => {
-      res.render('user/checkout', {
-        path: '/checkout',
-        pageTitle: 'Checkout',
+      res.render("user/checkout", {
+        path: "/checkout",
+        pageTitle: "Checkout",
         events: events,
         totalSum: total,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -221,78 +214,78 @@ exports.getCheckout = (req, res, next) => {
 };
 
 exports.postPayment = (req, res, next) => {
-  const orderId = 'TEST_' + new Date().getTime()
+  const orderId = "TEST_" + new Date().getTime();
   let events;
   let total = 0;
   req.user
-    .populate('registration.events.eventId')
+    .populate("registration.events.eventId")
     .execPopulate()
-    .then(user => {
+    .then((user) => {
       events = user.registration.events;
       total = 0;
-      events.forEach(e => {
+      events.forEach((e) => {
         total += e.quantity * e.eventId.price;
       });
       var paymentDetails = {
         amount: total,
-        customerId: user.Name.replace(/\s/g, ''),
-        customerEmail:user.email,
-        customerPhone: user.PhoneNo
-      }
+        customerId: user.Name.replace(/\s/g, ""),
+        customerEmail: user.email,
+        customerPhone: user.PhoneNo,
+      };
       var params = {};
       params.body = {
-        "requestType": "Payment",
-        "mid": config.paytmConfig.mid,
-        "websiteName": config.paytmConfig.website,
-        "orderId": orderId,
-        "callbackUrl": `http://localhost:3000/callback`,
-        "txnAmount": {
-            "value": paymentDetails.amount,
-            "currency": "INR",
+        requestType: "Payment",
+        mid: config.paytmConfig.mid,
+        websiteName: config.paytmConfig.website,
+        orderId: orderId,
+        callbackUrl: `https://zephyrustechfest.com/callback`,
+        txnAmount: {
+          value: paymentDetails.amount,
+          currency: "INR",
         },
-        "userInfo": {
-            "custId": paymentDetails.customerId,
-            "email": paymentDetails.customerEmail,
-            "mobileNo" : paymentDetails.customerPhone
+        userInfo: {
+          custId: paymentDetails.customerId,
+          email: paymentDetails.customerEmail,
+          mobileNo: paymentDetails.customerPhone,
         },
-    };
-    return params
+      };
+      return params;
     })
     .then((params) => {
-    checksum_lib.generateSignature(JSON.stringify(params.body), config.paytmConfig.key).then(function (checksum) {
+      checksum_lib
+        .generateSignature(JSON.stringify(params.body), config.paytmConfig.key)
+        .then(function (checksum) {
+          params.head = {
+            signature: checksum,
+          };
 
-      params.head = {
-          "signature": checksum,
-      };
+          var post_data = JSON.stringify(params);
 
-      var post_data = JSON.stringify(params);
+          var options = {
+            /* for Staging */
+            // hostname: "securegw-stage.paytm.in",
 
-      var options = {
+            /* for Production */
+            hostname: "securegw.paytm.in",
 
-          /* for Staging */
-          hostname: 'securegw-stage.paytm.in',
+            port: 443,
+            path: `/theia/api/v1/initiateTransaction?mid=${config.paytmConfig.mid}&orderId=${orderId}`,
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Content-Length": post_data.length,
+            },
+          };
 
-          /* for Production */
-          // hostname: 'securegw.paytm.in',
-
-          port: 443,
-          path: `/theia/api/v1/initiateTransaction?mid=${config.paytmConfig.mid}&orderId=${orderId}`,
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'Content-Length': post_data.length, 
-          }
-      };
-
-      var response = "";
-      var post_req = https.request(options, function (post_res) {
-          post_res.on('data', function (chunk) {
+          var response = "";
+          var post_req = https.request(options, function (post_res) {
+            post_res.on("data", function (chunk) {
               response += chunk;
-          });
+            });
 
-          post_res.on('end', function () {
-              response = JSON.parse(response)
-              res.writeHead(200, { 'Content-Type': 'text/html' })
+            post_res.on("end", function () {
+              response = JSON.parse(response);
+              res.writeHead(200, { "Content-Type": "text/html" });
               res.write(`<html>
                   <head>
                       <title>Show Payment Page</title>
@@ -301,7 +294,7 @@ exports.postPayment = (req, res, next) => {
                       <center>
                           <h1>Please do not refresh this page...</h1>
                       </center>
-                      <form method="post" action="https://securegw-stage.paytm.in/theia/api/v1/showPaymentPage?mid=${config.paytmConfig.mid}&orderId=${orderId}" name="paytm">
+                      <form method="post" action="https://securegw.paytm.in/theia/api/v1/showPaymentPage?mid=${config.paytmConfig.mid}&orderId=${orderId}" name="paytm">
                           <table border="1">
                               <tbody>
                                     <input type="hidden" name="mid" value="${config.paytmConfig.mid}">
@@ -313,133 +306,141 @@ exports.postPayment = (req, res, next) => {
                                 <script type="text/javascript"> document.paytm.submit(); </script>
                      </form>
                   </body>
-               </html>`)
-              res.end()
+               </html>`);
+              res.end();
+            });
           });
-      });
 
-      post_req.write(post_data);
-      post_req.end();
-    });
+          post_req.write(post_data);
+          post_req.end();
+        });
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
     });
-}
+};
 
 exports.postCallback = (req, res, next) => {
-  data = JSON.parse(JSON.stringify(req.body))
-  if(data.STATUS == 'TXN_SUCCESS'){
-  const paytmChecksum = data.CHECKSUMHASH
-  var isVerifySignature = checksum_lib.verifySignature(data, config.paytmConfig.key, paytmChecksum)
-  if (isVerifySignature) {
-      console.log("Checksum Matched"); 
-      res.render('user/payment-success', {
-        path: '/success',
-        pageTitle: 'Success',
+  data = JSON.parse(JSON.stringify(req.body));
+  if (data.STATUS == "TXN_SUCCESS") {
+    const paytmChecksum = data.CHECKSUMHASH;
+    var isVerifySignature = checksum_lib.verifySignature(
+      data,
+      config.paytmConfig.key,
+      paytmChecksum
+    );
+    if (isVerifySignature) {
+      console.log("Checksum Matched");
+      res.render("user/payment-success", {
+        path: "/success",
+        pageTitle: "Success",
       });
-      } else {
-        console.log("Checksum Mismatched");
-        res.render('user/payment-failure', {
-          path: '/Failed',
-          pageTitle: 'Failed',
-        });
-      }  
-  }
-  else
-  {
-    res.render('user/payment-failure', {
-      path: '/Failed',
-      pageTitle: 'Failed',
+    } else {
+      console.log("Checksum Mismatched");
+      res.render("user/payment-failure", {
+        path: "/Failed",
+        pageTitle: "Failed",
+      });
+    }
+  } else {
+    res.render("user/payment-failure", {
+      path: "/Failed",
+      pageTitle: "Failed",
     });
-  }       
-}
+  }
+};
 
 exports.getCheckoutSuccess = (req, res, next) => {
   let total = 0;
   let Allevents;
   var today = new Date();
-  var dd = String(today.getDate()).padStart(2, '0');
-  var mm = String(today.getMonth() + 1).padStart(2, '0');
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0");
   var yyyy = today.getFullYear();
-  today = mm + '/' + dd + '/' + yyyy;
+  today = mm + "/" + dd + "/" + yyyy;
   req.user
-    .populate('registration.events.eventId')
+    .populate("registration.events.eventId")
     .execPopulate()
-    .then(user => {
-      const events = user.registration.events.map(i => {
+    .then((user) => {
+      const events = user.registration.events.map((i) => {
         return { quantity: i.quantity, event: { ...i.eventId._doc } };
       });
       Allevents = events;
-      events.forEach(e => {
+      events.forEach((e) => {
         total += e.quantity * e.event.price;
       });
-      events.forEach(e => {
-        Event.find({ _id: e.event._id })
-          .then(event => {
-            event[0].registrations = event[0].registrations + 1;
-            event[0].addTheUser(user);
-          })
-      })
+      events.forEach((e) => {
+        Event.find({ _id: e.event._id }).then((event) => {
+          event[0].registrations = event[0].registrations + 1;
+          event[0].addTheUser(user);
+        });
+      });
       const order = new Order({
         user: {
           email: req.user.email,
           userId: req.user,
         },
         events: events,
-        created_at : Date.now()
+        created_at: Date.now(),
       });
       return order.save();
     })
-    .then(result => {
+    .then((result) => {
       return req.user.clearCart();
     })
     .then(async () => {
-      Order.findOne({ 'user.userId': req.user._id })
-      .sort({created_at: -1})
-      .exec(async (err, post) => {
-        const input_text = `http://localhost:3000/order/${req.user._id}`
-        let img = await qrcode.toDataURL(input_text);
-        const data = await ejs.renderFile( "./templates/receipt.ejs", { name: req.user.Name, date: today, events: Allevents, total: total, orderId: post._id , src: img});
+      Order.findOne({ "user.userId": req.user._id })
+        .sort({ created_at: -1 })
+        .exec(async (err, post) => {
+          const input_text = `https://zephyrustechfest.com/order/${req.user._id}`;
+          let img = await qrcode.toDataURL(input_text);
+          const data = await ejs.renderFile("./templates/receipt.ejs", {
+            name: req.user.Name,
+            date: today,
+            events: Allevents,
+            total: total,
+            orderId: post._id,
+            src: img,
+          });
           return transporter.sendMail({
             to: req.user.email,
             from: "alanjacob433@gmail.com",
             subject: "Event Registration Receipt",
             attachDataUrls: true,
-            html: data
+            html: data,
           });
-      });
-      res.redirect('/orders');
+        });
+      res.redirect("/orders");
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    })
+    });
 };
 
 exports.getQrOrders = (req, res, next) => {
   const userId = req.params.userId;
   User.findById(userId)
     .then((user) => {
-      Order.find({ 'user.userId': userId })
-      .then(orders => {
-        res.render('user/orders', {
-          path: '/orders',
-          pageTitle: 'Your Orders',
-          orders: orders,
-          name: user.Name
+      Order.find({ "user.userId": userId })
+        .then((orders) => {
+          res.render("user/orders", {
+            path: "/orders",
+            pageTitle: "Your Orders",
+            orders: orders,
+            name: user.Name,
+          });
+        })
+        .catch((err) => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error);
         });
-      })
-      .catch(err => {
-        const error = new Error(err);
-        error.httpStatusCode = 500;
-        return next(error);
-      });
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -447,16 +448,16 @@ exports.getQrOrders = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  Order.find({ 'user.userId': req.user._id })
-    .then(orders => {
-      res.render('user/orders', {
-        path: '/orders',
-        pageTitle: 'Your Orders',
+  Order.find({ "user.userId": req.user._id })
+    .then((orders) => {
+      res.render("user/orders", {
+        path: "/orders",
+        pageTitle: "Your Orders",
         orders: orders,
-        name: req.user.Name
+        name: req.user.Name,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -478,11 +479,11 @@ exports.getUserProfile = (req, res, next) => {
           dept: undefined,
           address: undefined,
           state: undefined,
-          phoneNo: undefined
+          phoneNo: undefined,
         },
         user: user[0],
         errorMessage: null,
-        validationErrors: []
+        validationErrors: [],
       });
     })
     .catch((err) => {
@@ -490,7 +491,7 @@ exports.getUserProfile = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-}
+};
 
 exports.postUserProfile = (req, res, next) => {
   const Name = req.body.name;
@@ -502,9 +503,9 @@ exports.postUserProfile = (req, res, next) => {
   const phoneNo = req.body.phoneNo;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render('user/user-profile', {
-      pageTitle: 'User Profile',
-      path: '/user-profile',
+    return res.status(422).render("user/user-profile", {
+      pageTitle: "User Profile",
+      path: "/user-profile",
       errorMessage: errors.array()[0].msg,
       oldInput: {
         name: Name,
@@ -513,7 +514,7 @@ exports.postUserProfile = (req, res, next) => {
         dept: dept,
         address: address,
         state: state,
-        phoneNo: phoneNo
+        phoneNo: phoneNo,
       },
       user: {
         name: undefined,
@@ -522,9 +523,9 @@ exports.postUserProfile = (req, res, next) => {
         dept: undefined,
         address: undefined,
         state: undefined,
-        phoneNo: undefined
+        phoneNo: undefined,
       },
-      validationErrors: errors.array()
+      validationErrors: errors.array(),
     });
   }
   User.find({ _id: req.user._id })
@@ -553,39 +554,44 @@ exports.getInvoice = (req, res, next) => {
   Order.findById(orderId)
     .then(async (order) => {
       if (!order) {
-        return next(new Error('No order found.'));
+        return next(new Error("No order found."));
       }
       if (order.user.userId.toString() !== req.user._id.toString()) {
-        return next(new Error('Unauthorized'));
+        return next(new Error("Unauthorized"));
       }
-      order.events.forEach(e => {
+      order.events.forEach((e) => {
         total += e.quantity * e.event.price;
       });
 
       var today = new Date(Date.parse(order.created_at));
-      var dd = String(today.getDate()).padStart(2, '0');
-      var mm = String(today.getMonth() + 1).padStart(2, '0');
+      var dd = String(today.getDate()).padStart(2, "0");
+      var mm = String(today.getMonth() + 1).padStart(2, "0");
       var yyyy = today.getFullYear();
-      today = mm + '/' + dd + '/' + yyyy;
+      today = mm + "/" + dd + "/" + yyyy;
 
-      const invoiceName = 'invoice-' + orderId + '.pdf';
-      const invoicePath = path.join('data', 'invoices', invoiceName);
-      res.setHeader('Content-Type', 'application/pdf');
+      const invoiceName = "invoice-" + orderId + ".pdf";
+      const invoicePath = path.join("data", "invoices", invoiceName);
+      res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
-        'Content-Disposition',
+        "Content-Disposition",
         'inline; filename="' + invoiceName + '"'
       );
       if (fs.existsSync(invoicePath)) {
         const file = fs.createReadStream(invoicePath);
         file.pipe(res);
-      }
-      else {
-        const data = await ejs.renderFile( "./templates/receipt-template.ejs", { name: req.user.Name, date: today, events: order.events, total: total, orderId: order._id});
-        pdf.create(data).toFile(invoicePath,function(){
-            console.log("PDF Created");
-            const file = fs.createReadStream(invoicePath);
-            file.pipe(res);
-        })
+      } else {
+        const data = await ejs.renderFile("./templates/receipt-template.ejs", {
+          name: req.user.Name,
+          date: today,
+          events: order.events,
+          total: total,
+          orderId: order._id,
+        });
+        pdf.create(data).toFile(invoicePath, function () {
+          console.log("PDF Created");
+          const file = fs.createReadStream(invoicePath);
+          file.pipe(res);
+        });
       }
     })
     .catch((err) => {
@@ -595,23 +601,22 @@ exports.getInvoice = (req, res, next) => {
     });
 };
 
-
 exports.getEventBrochure = (req, res, next) => {
   const eventTitle = req.params.eventTitle;
-    const BrochureName = eventTitle + '.pdf';
-    const BrochurePath = path.join('public', 'brochures', BrochureName);
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      'attachment; filename="' + BrochureName + '"'
-    );
-    const file = fs.createReadStream(BrochurePath);
+  const BrochureName = eventTitle + ".pdf";
+  const BrochurePath = path.join("public", "brochures", BrochureName);
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader(
+    "Content-Disposition",
+    'attachment; filename="' + BrochureName + '"'
+  );
+  const file = fs.createReadStream(BrochurePath);
 
-    file.pipe(res);
+  file.pipe(res);
 };
 
 exports.getSpotRegistrationsPage = (req, res, next) => {
-  let message = req.flash('success');
+  let message = req.flash("success");
   if (message.length > 0) {
     message = message[0];
   } else {
@@ -625,7 +630,7 @@ exports.getSpotRegistrationsPage = (req, res, next) => {
         validationErrors: [],
         errorMessage: undefined,
         oldInput: {
-          email: ''
+          email: "",
         },
         events: events,
         success: message,
@@ -640,20 +645,18 @@ exports.getSpotRegistrationsPage = (req, res, next) => {
 
 exports.postSpotRegistrationsPage = (req, res, next) => {
   let email = req.body.email;
-  if(email === '@'){ 
-    email = '';
+  if (email === "@") {
+    email = "";
   }
   const eventsId = [req.body.eventId];
   const paymentDone = req.body.paymentDone;
   let events = [];
-  if(eventsId !== undefined)
-  {
-    for(let eventId of eventsId)
-    {
+  if (eventsId !== undefined) {
+    for (let eventId of eventsId) {
       Event.findById(eventId)
         .then((event) => {
-            let Event = {event}
-            events.push(Event)
+          let Event = { event };
+          events.push(Event);
         })
         .catch((err) => {
           const error = new Error(err);
@@ -664,11 +667,11 @@ exports.postSpotRegistrationsPage = (req, res, next) => {
   }
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-  Event.find()
-    .then((events) => {
-        return res.status(422).render('user/spot-registration', {
-          path: '/spot-registration',
-          pageTitle: 'Spot Registration',
+    Event.find()
+      .then((events) => {
+        return res.status(422).render("user/spot-registration", {
+          path: "/spot-registration",
+          pageTitle: "Spot Registration",
           errorMessage: errors.array()[0].msg,
           events: events,
           oldInput: {
@@ -676,63 +679,60 @@ exports.postSpotRegistrationsPage = (req, res, next) => {
           },
           validationErrors: errors.array(),
           message: undefined,
-          success: undefined
+          success: undefined,
         });
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
+      })
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
   }
-  User.find({email: email})
+  User.find({ email: email })
     .then((user) => {
-      if(eventsId[0] === undefined){
-        Event.find()
-        .then((events) => {
-            return res.status(422).render('user/spot-registration', {
-              path: '/spot-registration',
-              pageTitle: 'Spot Registration',
-              errorMessage: 'Please select the events to register',
-              oldInput: {
-                email: email,
-              },
-              events: events,
-              validationErrors: [],
-              message: undefined,
-              success: undefined
-            });
-        })
-      }
-      else {
-        User.find({email: email})
-        .then((user) => {
-          events.forEach(e => {
-            Event.find({ _id: e.event._id })
-              .then(event => {
-                event[0].addTheUser(user[0]);
-              })
-          })
-          const spot = new Spot({
-            user: {
-              email: user[0].email,
-              userId: user[0]._id,
+      if (eventsId[0] === undefined) {
+        Event.find().then((events) => {
+          return res.status(422).render("user/spot-registration", {
+            path: "/spot-registration",
+            pageTitle: "Spot Registration",
+            errorMessage: "Please select the events to register",
+            oldInput: {
+              email: email,
             },
-            paymentDone: paymentDone,
             events: events,
-            created_at : Date.now()
+            validationErrors: [],
+            message: undefined,
+            success: undefined,
           });
-          spot.save();
-        })
-        .then(() => {;
-          req.flash('success', 'Spot Registration Was Successfull!')
-          res.redirect('/spot-registration')
-        })
-        .catch((err) => {
-          const error = new Error(err);
-          error.httpStatusCode = 500;
-          return next(error);
         });
+      } else {
+        User.find({ email: email })
+          .then((user) => {
+            events.forEach((e) => {
+              Event.find({ _id: e.event._id }).then((event) => {
+                event[0].addTheUser(user[0]);
+              });
+            });
+            const spot = new Spot({
+              user: {
+                email: user[0].email,
+                userId: user[0]._id,
+              },
+              paymentDone: paymentDone,
+              events: events,
+              created_at: Date.now(),
+            });
+            spot.save();
+          })
+          .then(() => {
+            req.flash("success", "Spot Registration Was Successfull!");
+            res.redirect("/spot-registration");
+          })
+          .catch((err) => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+          });
       }
     })
     .catch((err) => {
@@ -748,9 +748,9 @@ exports.getGroupMemberPage = (req, res, next) => {
       if (!user) {
         return res.redirect("/");
       }
-      res.render('user/group-member', {
-        path: '/add-group',
-        pageTitle: 'Add Group Members',
+      res.render("user/group-member", {
+        path: "/add-group",
+        pageTitle: "Add Group Members",
         oldInput: {
           candidate1Name: undefined,
           candidate1Phone: undefined,
@@ -762,7 +762,7 @@ exports.getGroupMemberPage = (req, res, next) => {
           candidate4Phone: undefined,
         },
         errorMessage: null,
-        validationErrors: []
+        validationErrors: [],
       });
     })
     .catch((err) => {
@@ -770,7 +770,7 @@ exports.getGroupMemberPage = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-}
+};
 
 exports.postGroupMemberPage = (req, res, next) => {
   const groupMembers = {
@@ -782,14 +782,14 @@ exports.postGroupMemberPage = (req, res, next) => {
     candidate3Phone: req.body.candidate3Phone,
     candidate4Name: req.body.candidate4Name,
     candidate4Phone: req.body.candidate4Phone,
-  }
-  const group = [{groupMembers}]
+  };
+  const group = [{ groupMembers }];
   const eventId = req.body.eventId;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render('user/group-member', {
-      pageTitle: 'Add Group Members',
-      path: '/add-group',
+    return res.status(422).render("user/group-member", {
+      pageTitle: "Add Group Members",
+      path: "/add-group",
       errorMessage: errors.array()[0].msg,
       oldInput: {
         candidate1Name: groupMembers.candidate1Name,
@@ -802,62 +802,61 @@ exports.postGroupMemberPage = (req, res, next) => {
         candidate4Phone: groupMembers.candidate4Phone,
       },
       eventId: req.body.eventId,
-      validationErrors: errors.array()
+      validationErrors: errors.array(),
     });
   }
   User.find({ _id: req.user._id })
     .then((user) => {
-      return user[0].updateOne({$push : { group: group }}).then((result) => {
+      return user[0].updateOne({ $push: { group: group } }).then((result) => {
         console.log("UPDATED User Profile!");
       });
     })
     .then(() => {
-      Event.findById(eventId)
-        .then((event) => {
-            req.user.addToRegister(event);
-            req.flash('success' , 'Event Added to Registrations');
-            res.redirect('/events');
-          })
+      Event.findById(eventId).then((event) => {
+        req.user.addToRegister(event);
+        req.flash("success", "Event Added to Registrations");
+        res.redirect("/events");
+      });
     })
     .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
     });
-}
+};
 
 exports.postQuery = (req, res, next) => {
   let email = req.body.email;
-  if(email === '@'){
-    email = '';
+  if (email === "@") {
+    email = "";
   }
   const name = req.body.name;
   const message = req.body.message;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render('user/Zephyrus', {
-      path: '/',
-      pageTitle: 'Zephyrus 4.0',
+    return res.status(422).render("user/Zephyrus", {
+      path: "/",
+      pageTitle: "Zephyrus 4.0",
       errorMessage: errors.array()[0].msg,
-      success : undefined,
+      success: undefined,
       oldInput: {
         email: email,
         name: name,
-        message: message
+        message: message,
       },
-      validationErrors: errors.array()
+      validationErrors: errors.array(),
     });
   }
   transporter.sendMail({
     to: "alanjacob433@gmail.com",
-    from: 'alanjacob433@gmail.com',
+    from: "alanjacob433@gmail.com",
     subject: "Zephyrus 4.0 Query",
     html: `
     <h2>Name: ${name}</h2>
     <h2>Email: ${email}</h2>
     <h2>Message: ${message}</h2>
-    `
+    `,
   });
-  req.flash('success', 'We will answer your query shortly.')
-  res.redirect('/');
-}
+  req.flash("success", "We will answer your query shortly.");
+  res.redirect("/");
+};
