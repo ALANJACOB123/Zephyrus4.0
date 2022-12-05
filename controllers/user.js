@@ -153,7 +153,7 @@ exports.postRegistration = (req, res, next) => {
               });
             } else {
               req.user.addToRegister(event);
-              req.flash("success", "Event Added to Registrations");
+              req.flash("success", "Please go to the Register Page to complete the registration");
               res.redirect("/events");
             }
           })
@@ -406,7 +406,7 @@ exports.getCheckoutSuccess = (req, res, next) => {
           });
           return transporter.sendMail({
             to: req.user.email,
-            from: "alanjacob433@gmail.com",
+            from: "zephyrus@christcollegeijk.edu.in",
             subject: "Event Registration Receipt",
             attachDataUrls: true,
             html: data,
@@ -849,7 +849,7 @@ exports.postQuery = (req, res, next) => {
   }
   transporter.sendMail({
     to: "alanjacob433@gmail.com",
-    from: "alanjacob433@gmail.com",
+    from: "zephyrus@christcollegeijk.edu.in",
     subject: "Zephyrus 4.0 Query",
     html: `
     <h2>Name: ${name}</h2>

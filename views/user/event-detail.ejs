@@ -11,7 +11,7 @@
 
     <body style="/*background: url(&quot;design.jpg&quot;);*/background-position: 0 -60px;">
         <%- include('../includes/user-navigation.ejs') %>
-        <section class="py-5">
+        <section class="pb-5">
             <div class="container py-5">
                 <a class="btn btn-primary" href="/events" style="font-size: 20px;margin-bottom: 26px;">Go Back</a>
                 <img class="event-details-img img-fluid" src="/<%= event.imageUrl %>" alt="<%= event.title %>" width="1296" height="500">
@@ -27,35 +27,48 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <p class="h3" style="margin-top: 7px;"><%= event.description %></p>
+                        <p class="" style="margin-top: 7px;"><span class="h3 pb-1">Description</span></br><%= event.description %></p>
                     </div>
                 </div>
             </div>
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <p>Teacher Coordinator</p>
+                        <p>Venue - <span class="fw-bold"><%= event.venue %></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>Teacher Coordinator - <span class="fw-bold"><%= event.teacherName %></span></p>
+                    </div>
+                    <div class="col-md-12">
+                        <p>Coordinator PhoneNo. - <span class="fw-bold"><%= event.teacherPhone %></span></p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <p>Student Coordinator</p>
+                        <p>Student Coordinator - <span class="fw-bold"><%= event.studentName %></span></p>
+                    </div>
+                    <div class="col-md-12">
+                        <p>Coordinator PhoneNo. - <span class="fw-bold"><%= event.studentPhone %></span></p>
                     </div>
                 </div>
             </div>
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
-                        <p>Date</p>
+                        <p>Date: - <%= event.date %></p>
                     </div>
-                    <div class="col-md-6">
+                    <!-- <div class="col-md-6">
                         <p>Time</p>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="container">
                 <div class="row">
-                    <div class="col-md-12"><a href="/event/<%= event.title %>">Brochure link</a></div>
+                    <div class="col-md-12">Event Brochure - <a href="/event/<%= event.title %>">Brochure link</a></div>
                 </div>
             </div>
             

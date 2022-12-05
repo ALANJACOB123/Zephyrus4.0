@@ -175,7 +175,7 @@ exports.postAdminReset = (req, res, next) => {
         const data = await ejs.renderFile( "./templates/password-reset.ejs", { name: 'Admin', token : token });
         return transporter.sendMail({
           to: req.body.email,
-          from: "alanjacob433@gmail.com",
+          from: "zephyrus@christcollegeijk.edu.in",
           subject: "Password reset",
           html: data,
         });
@@ -564,7 +564,7 @@ exports.postReset = (req, res, next) => {
         const data = await ejs.renderFile( "./templates/password-reset.ejs", { name: userName, token : token });
         return transporter.sendMail({
           to: req.body.email,
-          from: "alanjacob433@gmail.com",
+          from: "zephyrus@christcollegeijk.edu.in",
           subject: "Password reset",
           html: data,
         });

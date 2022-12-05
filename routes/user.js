@@ -77,16 +77,6 @@ router.post('/add-group',[
       .exists()
       .isMobilePhone()
       .trim(),
-  check('candidate3Name').not().isEmpty().withMessage('Please Enter a valid Name'),
-  body('candidate3Phone', 'Please Enter a valid Phone Number')
-      .exists()
-      .isMobilePhone()
-      .trim(),
-  check('candidate4Name').not().isEmpty().withMessage('Please Enter a valid Name'),
-  body('candidate4Phone', 'Please Enter a valid Phone Number')
-      .exists()
-      .isMobilePhone()
-      .trim(),
 ], isAuth.userAuth, userController.postGroupMemberPage);
 
 router.post('/query', [
