@@ -1,4 +1,4 @@
-<% if (event.active || event.registrations <= 60 ) { %>
+<% if (event.active && event.registrations <= 60 ) { %>
 <form action="/register" method="post">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <button class="btn btn-primary" type="submit" style="margin-left: 14px;">Register</button>

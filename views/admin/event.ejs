@@ -26,7 +26,7 @@
                                                 <div class="py-4">
                                                     <span class="badge bg-primary mb-2">Price - <%= event.price %></span>
                                                     <h4 class="fw-bold"><%= event.title %></h4>
-                                                    <p class="text-muted"><%= event.description %></p>
+                                                    <p class="text-muted">Date: <%= event.date %></p>
                                                     <h4 class="fw-bold" style="font-size: 17px;">Event Type - <span style="font-size: 18px;"><%= event.type %></span></h4>
                                                 </div>
                                             </div>
@@ -57,4 +57,4 @@
                     <% } %>
                 </div>
             </section>
-            <%- include('../includes/end.ejs') %>
+            <%- include('../includes/end-no-footer.ejs') %>

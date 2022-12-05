@@ -28,9 +28,29 @@ let transporter = nodemailer.createTransport({
 });
 
 exports.getPage = (req, res, next) => {
-    res.render("user/zephyrus", {
-      pageTitle: "Zephyrus 4.0",
-      path: "/",
+  let message = req.flash('error');
+  let emailsent = req.flash('success')
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  if (emailsent.length > 0) {
+    emailsent = emailsent[0];
+  } else {
+    emailsent = null;
+  }
+  res.render("user/zephyrus", {
+    pageTitle: "Zephyrus 4.0",
+    path: "/",
+    errorMessage: message,
+    success: emailsent,
+    oldInput: {
+      email: '',
+      name: '',
+      message: ''
+    },
+    validationErrors: []
     });
 };
 
@@ -385,7 +405,7 @@ exports.getCheckoutSuccess = (req, res, next) => {
         const data = await ejs.renderFile( "./templates/receipt.ejs", { name: req.user.Name, date: today, events: Allevents, total: total, orderId: post._id , src: img});
           return transporter.sendMail({
             to: req.user.email,
-            from: "zephyrus@christcollegeijk.edu.in",
+            from: "alanjacob433@gmail.com",
             subject: "Event Registration Receipt",
             attachDataUrls: true,
             html: data
@@ -804,4 +824,40 @@ exports.postGroupMemberPage = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
+}
+
+exports.postQuery = (req, res, next) => {
+  let email = req.body.email;
+  if(email === '@'){
+    email = '';
+  }
+  const name = req.body.name;
+  const message = req.body.message;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render('user/Zephyrus', {
+      path: '/',
+      pageTitle: 'Zephyrus 4.0',
+      errorMessage: errors.array()[0].msg,
+      success : undefined,
+      oldInput: {
+        email: email,
+        name: name,
+        message: message
+      },
+      validationErrors: errors.array()
+    });
+  }
+  transporter.sendMail({
+    to: "alanjacob433@gmail.com",
+    from: 'alanjacob433@gmail.com',
+    subject: "Zephyrus 4.0 Query",
+    html: `
+    <h2>Name: ${name}</h2>
+    <h2>Email: ${email}</h2>
+    <h2>Message: ${message}</h2>
+    `
+  });
+  req.flash('success', 'We will answer your query shortly.')
+  res.redirect('/');
 }

@@ -89,4 +89,16 @@ router.post('/add-group',[
       .trim(),
 ], isAuth.userAuth, userController.postGroupMemberPage);
 
+router.post('/query', [
+  check('email')
+    .isEmail()
+    .withMessage('Please enter a valid email.')
+    .normalizeEmail(),
+  check('name').not().isEmpty().withMessage('Please Enter a valid Name'),
+  body('message')
+    .isLength({ min: 5, max: 400 })
+    .trim()
+    .withMessage('Please enter a valid Message.')
+], userController.postQuery)
+
 module.exports = router;
