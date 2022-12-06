@@ -34,7 +34,7 @@ router.post("/register-delete-event", isAuth.userAuth, userController.postRegist
 
 router.get('/checkout', isAuth.userAuth, userController.getCheckout);
 
-router.post('/paynow', isAuth.userAuth, userController.postPayment);
+router.post('/paynow_user', isAuth.userAuth, userController.postPayment);
 
 router.post('/callback', userController.postCallback);
 
