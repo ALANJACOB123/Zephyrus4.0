@@ -85,8 +85,8 @@ router.get("/registrations/:eventTitle", isAuth.adminAuth, adminController.getRe
 
 router.get('/spot_access_user', isAuth.adminAuth, adminController.getSpotAccess)
 
-router.post('/spot-access_user', isAuth.adminAuth, adminController.postSpotAccess)
+router.post('/spot_access_user', isAuth.adminAuth, adminController.postSpotAccess)
 
-router.post('/give-access', isAuth.adminAuth, adminController.postgiveAccess)
+router.post('/give-access_user', isAuth.adminAuth, adminController.postgiveAccess)
 
 module.exports = router;
