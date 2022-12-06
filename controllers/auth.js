@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const ejs = require("ejs");
-const { validationResult } = require('express-validator/check');
+const { validationResult } = require("express-validator/check");
 
 const AdminUser = require("../models/admin-user");
 const User = require("../models/user");
@@ -15,13 +15,13 @@ let transporter = nodemailer.createTransport({
   port: 465,
   auth: {
     user: `${process.env.MAIL_USERNAME}`,
-    pass: `${process.env.MAIL_PASSWORD}`
+    pass: `${process.env.MAIL_PASSWORD}`,
   },
 });
 
 exports.getAdminLogin = (req, res, next) => {
-  let message = req.flash('error');
-  let emailsent = req.flash('emailsent')
+  let message = req.flash("error");
+  let emailsent = req.flash("emailsent");
   if (message.length > 0) {
     message = message[0];
   } else {
@@ -38,44 +38,44 @@ exports.getAdminLogin = (req, res, next) => {
     errorMessage: message,
     emailsent: emailsent,
     oldInput: {
-      email: '',
-      password: ''
+      email: "",
+      password: "",
     },
-    validationErrors: []
+    validationErrors: [],
   });
 };
 
 exports.postAdminLogin = (req, res, next) => {
   let email = req.body.email;
-  if(email === '@'){
-    email = '';
+  if (email === "@") {
+    email = "";
   }
   const password = req.body.password;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render('admin/admin-login', {
-      path: '/admin-login',
-      pageTitle: 'Admin-Login',
+    return res.status(422).render("admin/admin-login", {
+      path: "/admin-login",
+      pageTitle: "Admin-Login",
       errorMessage: errors.array()[0].msg,
       oldInput: {
         email: email,
-        password: password
+        password: password,
       },
-      validationErrors: errors.array()
+      validationErrors: errors.array(),
     });
   }
   AdminUser.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        return res.status(422).render('admin/admin-login', {
-          path: '/admin-login',
-          pageTitle: 'Admin-Login',
-          errorMessage: 'Invalid email or password.',
+        return res.status(422).render("admin/admin-login", {
+          path: "/admin-login",
+          pageTitle: "Admin-Login",
+          errorMessage: "Invalid email or password.",
           oldInput: {
             email: email,
-            password: password
+            password: password,
           },
-          validationErrors: []
+          validationErrors: [],
         });
       }
 
@@ -89,28 +89,27 @@ exports.postAdminLogin = (req, res, next) => {
               return res.redirect("/admin/events");
             });
           }
-          return res.status(422).render('admin/admin-login', {
-            path: '/admin-login',
-            pageTitle: 'Admin-Login',
-            errorMessage: 'Invalid email or password.',
+          return res.status(422).render("admin/admin-login", {
+            path: "/admin-login",
+            pageTitle: "Admin-Login",
+            errorMessage: "Invalid email or password.",
             oldInput: {
               email: email,
-              password: password
+              password: password,
             },
-            validationErrors: []
+            validationErrors: [],
           });
         })
-        .catch(err => {
-          res.redirect('/admin-login');
+        .catch((err) => {
+          res.redirect("/admin-login");
         });
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
     });
 };
-
 
 exports.postAdminLogout = (req, res, next) => {
   req.session.destroy((err) => {
@@ -122,9 +121,9 @@ exports.getAdminReset = (req, res, next) => {
   res.render("admin/admin-reset", {
     path: "/admin-reset",
     pageTitle: "Reset Password",
-    errorMessage: '',
+    errorMessage: "",
     oldInput: {
-      email: '',
+      email: "",
     },
     validationErrors: [],
   });
@@ -132,19 +131,19 @@ exports.getAdminReset = (req, res, next) => {
 
 exports.postAdminReset = (req, res, next) => {
   let email = req.body.email;
-  if(email === '@'){
-    email = '';
+  if (email === "@") {
+    email = "";
   }
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render('admin/admin-reset', {
-      path: '/admin-reset',
-      pageTitle: 'Reset Password',
+    return res.status(422).render("admin/admin-reset", {
+      path: "/admin-reset",
+      pageTitle: "Reset Password",
       errorMessage: errors.array()[0].msg,
       oldInput: {
         email: email,
       },
-      validationErrors: errors.array()
+      validationErrors: errors.array(),
     });
   }
   crypto.randomBytes(32, (err, buffer) => {
@@ -155,24 +154,30 @@ exports.postAdminReset = (req, res, next) => {
     AdminUser.findOne({ email: req.body.email })
       .then((user) => {
         if (!user) {
-          return res.status(422).render('admin/admin-reset', {
-            path: '/admin-reset',
-            pageTitle: 'Reset Password',
-            errorMessage: 'No account with that email found.',
+          return res.status(422).render("admin/admin-reset", {
+            path: "/admin-reset",
+            pageTitle: "Reset Password",
+            errorMessage: "No account with that email found.",
             oldInput: {
               email: req.body.email,
             },
-            validationErrors: []
+            validationErrors: [],
           });
         }
         user.resetToken = token;
         user.resetTokenExpiration = Date.now() + 3600000;
         return user.save();
       })
-      .then( async (result) => {
-        req.flash('emailsent', 'Please check your Email for password reset link');
+      .then(async (result) => {
+        req.flash(
+          "emailsent",
+          "Please check your Email for password reset link"
+        );
         res.redirect("/admin-login");
-        const data = await ejs.renderFile( "./templates/password-reset.ejs", { name: 'Admin', token : token });
+        const data = await ejs.renderFile("./templates/password-reset.ejs", {
+          name: "Admin",
+          token: token,
+        });
         return transporter.sendMail({
           to: req.body.email,
           from: "zephyrus@christcollegeijk.edu.in",
@@ -184,38 +189,34 @@ exports.postAdminReset = (req, res, next) => {
         const error = new Error(err);
         error.httpStatusCode = 500;
         return next(error);
-
       });
   });
 };
 
 exports.getAdminNewPassword = (req, res, next) => {
-  let message = req.flash('success');
+  let message = req.flash("success");
   if (message.length > 0) {
     message = message[0];
   } else {
     message = null;
   }
   const token = req.params.token;
-  if(message)
-  {
+  if (message) {
     res.render("admin/admin-new-password", {
       path: "/admin-new-password",
       pageTitle: "New Password",
-      userId: '',
+      userId: "",
       passwordToken: token,
       errorMessage: null,
       success: message,
       oldInput: {
-        password: '',
-        confirmPassword: ''
+        password: "",
+        confirmPassword: "",
       },
       windowclose: true,
       validationErrors: [],
     });
-  }
-  else
-  {
+  } else {
     AdminUser.findOne({
       resetToken: token,
       resetTokenExpiration: { $gt: Date.now() },
@@ -229,8 +230,8 @@ exports.getAdminNewPassword = (req, res, next) => {
           errorMessage: message,
           success: message,
           oldInput: {
-            password: '',
-            confirmPassword: ''
+            password: "",
+            confirmPassword: "",
           },
           validationErrors: [],
           windowclose: false,
@@ -242,7 +243,6 @@ exports.getAdminNewPassword = (req, res, next) => {
         return next(error);
       });
   }
-  
 };
 
 exports.postAdminNewPassword = (req, res, next) => {
@@ -254,16 +254,16 @@ exports.postAdminNewPassword = (req, res, next) => {
   let resetUser;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render('admin/admin-new-password', {
-      path: '/admin-new-password',
-      pageTitle: 'New Password',
+    return res.status(422).render("admin/admin-new-password", {
+      path: "/admin-new-password",
+      pageTitle: "New Password",
       errorMessage: errors.array()[0].msg,
       userId: userId,
       passwordToken: passwordToken,
       success: null,
       oldInput: {
         password: newPassword,
-        confirmPassword: confirmPassword
+        confirmPassword: confirmPassword,
       },
       validationErrors: errors.array(),
       windowclose: false,
@@ -285,7 +285,10 @@ exports.postAdminNewPassword = (req, res, next) => {
       return resetUser.save();
     })
     .then((result) => {
-      req.flash('success', 'Your pasword has been successfully Reset. This window will be automatically closed')
+      req.flash(
+        "success",
+        "Your pasword has been successfully Reset. This window will be automatically closed"
+      );
       res.redirect(`/admin-reset/${token}`);
     })
     .catch((err) => {
@@ -296,8 +299,8 @@ exports.postAdminNewPassword = (req, res, next) => {
 };
 
 exports.getLogin = (req, res, next) => {
-  let message = req.flash('error');
-  let emailsent = req.flash('emailsent');
+  let message = req.flash("error");
+  let emailsent = req.flash("emailsent");
   if (message.length > 0) {
     message = message[0];
   } else {
@@ -309,21 +312,21 @@ exports.getLogin = (req, res, next) => {
     emailsent = null;
   }
   res.render("auth/login", {
-    path: "/login",
+    path: "/login-now",
     pageTitle: "Login",
     errorMessage: message,
     emailsent: emailsent,
     oldInput: {
-      email: '',
-      password: '',
-      confirmPassword: ''
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
     validationErrors: [],
   });
 };
 
 exports.getSignup = (req, res, next) => {
-  let message = req.flash('error');
+  let message = req.flash("error");
   if (message.length > 0) {
     message = message[0];
   } else {
@@ -334,9 +337,9 @@ exports.getSignup = (req, res, next) => {
     pageTitle: "Signup",
     errorMessage: message,
     oldInput: {
-      email: '',
-      password: '',
-      confirmPassword: ''
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
     validationErrors: [],
   });
@@ -344,35 +347,35 @@ exports.getSignup = (req, res, next) => {
 
 exports.postLogin = (req, res, next) => {
   let email = req.body.email;
-  if(email === '@'){
-    email = '';
+  if (email === "@") {
+    email = "";
   }
   const password = req.body.password;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render('auth/login', {
-      path: '/login',
-      pageTitle: 'Login',
+    return res.status(422).render("auth/login", {
+      path: "/login-now",
+      pageTitle: "Login",
       errorMessage: errors.array()[0].msg,
       oldInput: {
         email: email,
-        password: password
+        password: password,
       },
-      validationErrors: errors.array()
+      validationErrors: errors.array(),
     });
   }
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        return res.status(422).render('auth/login', {
-          path: '/login',
-          pageTitle: 'Login',
-          errorMessage: 'Invalid email or password.',
+        return res.status(422).render("auth/login", {
+          path: "/login-now",
+          pageTitle: "Login",
+          errorMessage: "Invalid email or password.",
           oldInput: {
             email: email,
-            password: password
+            password: password,
           },
-          validationErrors: []
+          validationErrors: [],
         });
       }
       bcrypt
@@ -387,39 +390,36 @@ exports.postLogin = (req, res, next) => {
             isAdminLoggedIn = false;
             req.session.user = user;
             return req.session.save((err) => {
-              if(user.Name === undefined 
-                && user.CollegeName === undefined 
-                && user.Dept === undefined 
-                && user.Address === undefined 
-                && user.State === undefined 
-                && user.PhoneNo === undefined
-              )
-              {
+              if (
+                user.Name === undefined &&
+                user.CollegeName === undefined &&
+                user.Dept === undefined &&
+                user.Address === undefined &&
+                user.State === undefined &&
+                user.PhoneNo === undefined
+              ) {
                 res.redirect("/user-profile");
-
-              }
-              else
-              {
+              } else {
                 res.redirect("/");
               }
             });
           }
-          return res.status(422).render('auth/login', {
-            path: '/login',
-            pageTitle: 'Login',
-            errorMessage: 'Invalid email or password.',
+          return res.status(422).render("auth/login", {
+            path: "/login-now",
+            pageTitle: "Login",
+            errorMessage: "Invalid email or password.",
             oldInput: {
               email: email,
-              password: password
+              password: password,
             },
-            validationErrors: []
+            validationErrors: [],
           });
         })
-        .catch(err => {
-          res.redirect('/login');
+        .catch((err) => {
+          res.redirect("/login-now");
         });
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -432,7 +432,7 @@ exports.postLogin = (req, res, next) => {
 //       .then((user) => {
 //         if (!user) {
 //           return res.status(422).render('auth/login', {
-//             path: '/login',
+//             path: '/login-now',
 //             pageTitle: 'Login',
 //             errorMessage: 'Invalid email or password.',
 //           });
@@ -456,42 +456,41 @@ exports.postLogin = (req, res, next) => {
 //   }
 // };
 
-
 exports.postSignup = (req, res, next) => {
   let email = req.body.email;
-  if(email === '@'){
-    email = '';
+  if (email === "@") {
+    email = "";
   }
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render('auth/signup', {
-      path: '/signup',
-      pageTitle: 'Signup',
+    return res.status(422).render("auth/signup", {
+      path: "/signup",
+      pageTitle: "Signup",
       errorMessage: errors.array()[0].msg,
       oldInput: {
         email: email,
         password: password,
-        confirmPassword: req.body.confirmPassword
+        confirmPassword: req.body.confirmPassword,
       },
-      validationErrors: errors.array()
+      validationErrors: errors.array(),
     });
   }
   bcrypt
     .hash(password, 12)
-    .then(hashedPassword => {
+    .then((hashedPassword) => {
       const user = new User({
         email: email,
         password: hashedPassword,
-        registration: { events: [] }
+        registration: { events: [] },
       });
       return user.save();
     })
-    .then(result => {
-      res.redirect('/login');
+    .then((result) => {
+      res.redirect("/login-now");
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -509,9 +508,9 @@ exports.getReset = (req, res, next) => {
     path: "/reset",
     pageTitle: "Reset Password",
     spotAccess: false,
-    errorMessage: '',
+    errorMessage: "",
     oldInput: {
-      email: '',
+      email: "",
     },
     validationErrors: [],
   });
@@ -519,20 +518,20 @@ exports.getReset = (req, res, next) => {
 
 exports.postReset = (req, res, next) => {
   let email = req.body.email;
-  if(email === '@'){
-    email = '';
+  if (email === "@") {
+    email = "";
   }
   let userName = 0;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render('auth/reset', {
-      path: '/reset',
-      pageTitle: 'Reset Password',
+    return res.status(422).render("auth/reset", {
+      path: "/reset",
+      pageTitle: "Reset Password",
       errorMessage: errors.array()[0].msg,
       oldInput: {
         email: email,
       },
-      validationErrors: errors.array()
+      validationErrors: errors.array(),
     });
   }
   crypto.randomBytes(32, (err, buffer) => {
@@ -543,14 +542,14 @@ exports.postReset = (req, res, next) => {
     User.findOne({ email: req.body.email })
       .then((user) => {
         if (!user) {
-          return res.status(422).render('auth/reset', {
-            path: '/reset',
-            pageTitle: 'Reset Password',
-            errorMessage: 'No account with that email found.',
+          return res.status(422).render("auth/reset", {
+            path: "/reset",
+            pageTitle: "Reset Password",
+            errorMessage: "No account with that email found.",
             oldInput: {
               email: req.body.email,
             },
-            validationErrors: []
+            validationErrors: [],
           });
         }
         userName = user.Name;
@@ -558,10 +557,16 @@ exports.postReset = (req, res, next) => {
         user.resetTokenExpiration = Date.now() + 3600000;
         return user.save();
       })
-      .then( async (result) => {
-        req.flash('emailsent', 'Please check your Email for password reset link')
-        res.redirect("/login");
-        const data = await ejs.renderFile( "./templates/password-reset.ejs", { name: userName, token : token });
+      .then(async (result) => {
+        req.flash(
+          "emailsent",
+          "Please check your Email for password reset link"
+        );
+        res.redirect("/login-now");
+        const data = await ejs.renderFile("./templates/password-reset.ejs", {
+          name: userName,
+          token: token,
+        });
         return transporter.sendMail({
           to: req.body.email,
           from: "zephyrus@christcollegeijk.edu.in",
@@ -578,56 +583,55 @@ exports.postReset = (req, res, next) => {
 };
 
 exports.getNewPassword = (req, res, next) => {
-  let message = req.flash('success');
+  let message = req.flash("success");
   if (message.length > 0) {
     message = message[0];
   } else {
     message = null;
   }
   const token = req.params.token;
-  if(message)
-  {
+  if (message) {
     res.render("admin/admin-new-password", {
       path: "/admin-new-password",
       pageTitle: "New Password",
-      userId: '',
+      userId: "",
       passwordToken: token,
       errorMessage: null,
       success: message,
       oldInput: {
-        password: '',
-        confirmPassword: ''
+        password: "",
+        confirmPassword: "",
       },
       windowclose: true,
       validationErrors: [],
     });
-  }
-  else
-  {
-    User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
-    .then((user) => {
-      res.render("auth/new-password", {
-        path: "/new-password",
-        pageTitle: "New Password",
-        userId: user._id.toString(),
-        errorMessage: message,
+  } else {
+    User.findOne({
+      resetToken: token,
+      resetTokenExpiration: { $gt: Date.now() },
+    })
+      .then((user) => {
+        res.render("auth/new-password", {
+          path: "/new-password",
+          pageTitle: "New Password",
+          userId: user._id.toString(),
+          errorMessage: message,
           success: message,
           oldInput: {
-            password: '',
-            confirmPassword: ''
+            password: "",
+            confirmPassword: "",
           },
-        passwordToken: token,
-        windowclose: false,
-        validationErrors: [],
+          passwordToken: token,
+          windowclose: false,
+          validationErrors: [],
+        });
+      })
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
       });
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
   }
-  
 };
 
 exports.postNewPassword = (req, res, next) => {
@@ -639,16 +643,16 @@ exports.postNewPassword = (req, res, next) => {
   let resetUser;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).render('auth/new-password', {
-      path: '/new-password',
-      pageTitle: 'New Password',
+    return res.status(422).render("auth/new-password", {
+      path: "/new-password",
+      pageTitle: "New Password",
       errorMessage: errors.array()[0].msg,
       userId: userId,
       passwordToken: passwordToken,
       success: null,
       oldInput: {
         password: newPassword,
-        confirmPassword: confirmPassword
+        confirmPassword: confirmPassword,
       },
       validationErrors: errors.array(),
       windowclose: false,
@@ -670,7 +674,10 @@ exports.postNewPassword = (req, res, next) => {
       return resetUser.save();
     })
     .then((result) => {
-      req.flash('success', 'Your pasword has been successfully Reset. This window will be automatically closed')
+      req.flash(
+        "success",
+        "Your pasword has been successfully Reset. This window will be automatically closed"
+      );
       res.redirect(`reset/${token}`);
     })
     .catch((err) => {
@@ -679,4 +686,3 @@ exports.postNewPassword = (req, res, next) => {
       return next(error);
     });
 };
-
