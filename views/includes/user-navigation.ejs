@@ -22,7 +22,7 @@
                   <% } %>
               </ul>             
               <% if (!isAuthenticated) { %>
-                <a class="btn btn-primary shadow" role="button" href="https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=https://zephyrustechfest.com/auth/google/callback&scope=profile email&client_id=345773867041-4gi68dl6k9sfruopums2mh1ej3k5l804.apps.googleusercontent.com&service=lso&o2v=2" style="margin-top: 11px;">Login</a>
+                <a class="btn btn-primary shadow" role="button" href="/login_user" style="margin-top: 11px;">Login</a>
               <% } else { %>
                 <div class="dropdown" style="padding-right: 0px;margin-right: 24px;">
                   <a class="dropdown-toggle" aria-expanded="true" data-bs-toggle="dropdown" href="#">
