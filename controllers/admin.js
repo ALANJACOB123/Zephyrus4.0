@@ -408,7 +408,7 @@ exports.getSpotAccess = (req, res, next) => {
   }
   res.render("admin/admin-spot-access", {
     pageTitle: "Spot Access",
-    path: "/admin/spot-access",
+    path: "/admin/spot_access_user",
     errorMessage: message,
     success: undefined,
     email: undefined,
@@ -426,7 +426,7 @@ exports.postSpotAccess = (req, res, next) => {
     .then((user) => {
       if (!user) {
         return res.status(422).render('admin/admin-spot-access', {
-          path: '/admin/spot-access',
+          path: '/admin/spot_access_user',
           pageTitle: 'Spot Access',
           errorMessage: 'Invalid email',
           success: undefined,
@@ -447,7 +447,7 @@ exports.postSpotAccess = (req, res, next) => {
         }
         return res.render("admin/admin-spot-access", {
           pageTitle: "Spot Access",
-          path: "/admin/spot-access",
+          path: "/admin/spot_access_user",
           email: user.email,
           errorMessage: undefined,
           success: undefined,
@@ -480,7 +480,7 @@ exports.postgiveAccess = (req, res, next) => {
     .then((user) => {
       if (!user) {
         return res.status(422).render('admin/admin-spot-access', {
-          path: '/admin/spot-access',
+          path: '/admin/spot_access_user',
           pageTitle: 'Spot Access',
           errorMessage: 'Invalid email',
           success: undefined,
@@ -504,7 +504,7 @@ exports.postgiveAccess = (req, res, next) => {
           }
           return res.render("admin/admin-spot-access", {
             pageTitle: "Spot Access",
-            path: "/admin/spot-access",
+            path: "/admin/spot_access_user",
             email: undefined,
             errorMessage: undefined,
             success: success,

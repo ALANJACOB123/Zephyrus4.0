@@ -83,9 +83,9 @@ router.get("/registrations/download", isAuth.adminAuth, adminController.getRegis
 
 router.get("/registrations/:eventTitle", isAuth.adminAuth, adminController.getRegistrationsDownloadEvent);
 
-router.get('/spot-access', isAuth.adminAuth, adminController.getSpotAccess)
+router.get('/spot_access_user', isAuth.adminAuth, adminController.getSpotAccess)
 
-router.post('/spot-access', isAuth.adminAuth, adminController.postSpotAccess)
+router.post('/spot-access_user', isAuth.adminAuth, adminController.postSpotAccess)
 
 router.post('/give-access', isAuth.adminAuth, adminController.postgiveAccess)
 
