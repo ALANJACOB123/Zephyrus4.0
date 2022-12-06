@@ -87,6 +87,6 @@ router.get('/spot_access_user', isAuth.adminAuth, adminController.getSpotAccess)
 
 router.post('/spot_access_user', isAuth.adminAuth, adminController.postSpotAccess)
 
-router.post('/give-access_user', isAuth.adminAuth, adminController.postgiveAccess)
+router.post('/give_access_user', isAuth.adminAuth, adminController.postgiveAccess)
 
 module.exports = router;
