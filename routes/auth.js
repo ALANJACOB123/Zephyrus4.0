@@ -64,7 +64,7 @@ router.post(
   authController.postAdminNewPassword
 );
 
-router.get("/login-now", authController.getLogin);
+router.get("/login_user", authController.getLogin);
 
 router.get("/signup", authController.getSignup);
 
