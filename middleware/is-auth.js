@@ -7,7 +7,7 @@ exports.adminAuth = (req, res, next) => {
 
 exports.userAuth = (req, res, next) => {
   if (!req.session.isLoggedIn) {
-    return res.redirect("/login-now");
+    return res.redirect("/login_user");
   }
   next();
 };

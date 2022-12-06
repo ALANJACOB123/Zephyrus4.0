@@ -312,7 +312,7 @@ exports.getLogin = (req, res, next) => {
     emailsent = null;
   }
   res.render("auth/login", {
-    path: "/login-now",
+    path: "/login_user",
     pageTitle: "Login",
     errorMessage: message,
     emailsent: emailsent,
@@ -354,7 +354,7 @@ exports.postLogin = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/login", {
-      path: "/login-now",
+      path: "/login_user",
       pageTitle: "Login",
       errorMessage: errors.array()[0].msg,
       oldInput: {
@@ -368,7 +368,7 @@ exports.postLogin = (req, res, next) => {
     .then((user) => {
       if (!user) {
         return res.status(422).render("auth/login", {
-          path: "/login-now",
+          path: "/login_user",
           pageTitle: "Login",
           errorMessage: "Invalid email or password.",
           oldInput: {
@@ -405,7 +405,7 @@ exports.postLogin = (req, res, next) => {
             });
           }
           return res.status(422).render("auth/login", {
-            path: "/login-now",
+            path: "/login_user",
             pageTitle: "Login",
             errorMessage: "Invalid email or password.",
             oldInput: {
@@ -416,7 +416,7 @@ exports.postLogin = (req, res, next) => {
           });
         })
         .catch((err) => {
-          res.redirect("/login-now");
+          res.redirect("/login_user");
         });
     })
     .catch((err) => {
@@ -488,7 +488,7 @@ exports.postSignup = (req, res, next) => {
       return user.save();
     })
     .then((result) => {
-      res.redirect("/login-now");
+      res.redirect("/login_user");
     })
     .catch((err) => {
       const error = new Error(err);
@@ -562,7 +562,7 @@ exports.postReset = (req, res, next) => {
           "emailsent",
           "Please check your Email for password reset link"
         );
-        res.redirect("/login-now");
+        res.redirect("/login_user");
         const data = await ejs.renderFile("./templates/password-reset.ejs", {
           name: userName,
           token: token,

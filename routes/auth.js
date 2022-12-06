@@ -69,7 +69,7 @@ router.get("/login_user", authController.getLogin);
 router.get("/signup", authController.getSignup);
 
 router.post(
-  "/login-now",
+  "/login_user",
   [
     body("email")
       .isEmail()
@@ -175,7 +175,7 @@ router.get(
         .then((user) => {
           if (!user) {
             return res.status(422).render("auth/login", {
-              path: "/login-now",
+              path: "/login_user",
               pageTitle: "Login",
               errorMessage: "Invalid email or password.",
             });
@@ -210,7 +210,7 @@ router.get(
           return next(error);
         });
     } else {
-      res.redirect("/login-now");
+      res.redirect("/login_user");
     }
   }
 );
