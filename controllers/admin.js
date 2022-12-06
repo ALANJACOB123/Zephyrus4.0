@@ -265,8 +265,6 @@ exports.postEditEvent = (req, res, next) => {
       validationErrors: errors.array()
     });
   }
-
-
   Event.findById(eventId)
     .then((event) => {
       event.title = updatedTitle;
