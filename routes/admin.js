@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get("/", isAuth.adminAuth, adminController.getAdminPage);
 
-router.get("/add-admin",  adminController.getNewAdmin);
+router.get("/add-admin",isAuth.adminAuth, adminController.getNewAdmin);
 
 router.post("/add-admin", [
   check('email')
@@ -32,7 +32,7 @@ router.post("/add-admin", [
     .isLength({ min: 5 })
     .isAlphanumeric()
     .trim(),
-], adminController.postNewAdmin);
+],isAuth.adminAuth, adminController.postNewAdmin);
 
 // /admin/add-product => GET
 router.get("/add-event", isAuth.adminAuth, adminController.getAddEvent);
