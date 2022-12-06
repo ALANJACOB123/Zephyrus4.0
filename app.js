@@ -19,7 +19,7 @@ const errorController = require("./controllers/error");
 const User = require("./models/user");
 const adminUser = require("./models/admin-user");
 
-const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.7opvu.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
+const MONGODB_URI = process.env.MONGO_URL;
 
 const app = express();
 const store = new MongoDBStore({
