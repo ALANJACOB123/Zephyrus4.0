@@ -188,7 +188,6 @@ router.get(
             req.session.user = user;
             req.session.userImage = user.image;
             return req.session.save((err) => {
-              console.log(err);
               if (
                 user.Name === undefined &&
                 user.CollegeName === undefined &&
