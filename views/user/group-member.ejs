@@ -22,7 +22,6 @@
             <div class="col-md-6 col-xl-4">
                 <div>
                     <form class="p-3 p-xl-4" action="/add-group" method="POST">
-                        <small>*Required</small>
                         <div class="mb-3">
                             <input 
                             class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
@@ -30,7 +29,7 @@
                             name="candidate1Name" 
                             id="candidate1Name" 
                             value="<%= oldInput.candidate1Name %>"
-                            placeholder="Candidate Name">
+                            placeholder="Candidate Name(*Mandatory)">
                         </div>
                         <div class="mb-3">
                             <input 
@@ -48,7 +47,7 @@
                             name="candidate2Name" 
                             id="candidate2Name" 
                             value="<%= oldInput.candidate2Name %>"
-                            placeholder="Candidate Name">
+                            placeholder="Candidate Name(*Mandatory)">
                         </div>
                         <div class="mb-3">
                             <input 
@@ -66,7 +65,7 @@
                             name="candidate3Name" 
                             id="candidate3Name" 
                             value="<%= oldInput.candidate3Name %>"
-                            placeholder="Candidate Name">
+                            placeholder="Candidate Name(*Mandatory)">
                         </div>
                         <div class="mb-3">
                             <input 
