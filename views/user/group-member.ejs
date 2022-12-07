@@ -22,6 +22,7 @@
             <div class="col-md-6 col-xl-4">
                 <div>
                     <form class="p-3 p-xl-4" action="/add-group" method="POST">
+                        <small>*Required</small>
                         <div class="mb-3">
                             <input 
                             class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
