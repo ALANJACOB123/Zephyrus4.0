@@ -146,6 +146,8 @@ exports.postRegistration = (req, res, next) => {
                   candidate3Phone: undefined,
                   candidate4Name: undefined,
                   candidate4Phone: undefined,
+                  candidate5Name: undefined,
+                  candidate5Phone: undefined,
                 },
                 eventId: eventId,
                 errorMessage: null,
@@ -760,6 +762,8 @@ exports.getGroupMemberPage = (req, res, next) => {
           candidate3Phone: undefined,
           candidate4Name: undefined,
           candidate4Phone: undefined,
+          candidate5Name: undefined,
+          candidate5Phone: undefined,
         },
         errorMessage: null,
         validationErrors: [],
@@ -782,6 +786,8 @@ exports.postGroupMemberPage = (req, res, next) => {
     candidate3Phone: req.body.candidate3Phone,
     candidate4Name: req.body.candidate4Name,
     candidate4Phone: req.body.candidate4Phone,
+    candidate5Name: req.body.candidate5Name,
+    candidate5Phone: req.body.candidate5Phone,
   };
   const group = [{ groupMembers }];
   const eventId = req.body.eventId;
@@ -800,6 +806,8 @@ exports.postGroupMemberPage = (req, res, next) => {
         candidate3Phone: groupMembers.candidate3Phone,
         candidate4Name: groupMembers.candidate4Name,
         candidate4Phone: groupMembers.candidate4Phone,
+        candidate5Name: groupMembers.candidate5Name,
+        candidate5Phone: groupMembers.candidate5Phone,
       },
       eventId: req.body.eventId,
       validationErrors: errors.array(),
