@@ -647,33 +647,19 @@ exports.getSpotRegistrationsPage = (req, res, next) => {
 
 exports.postSpotRegistrationsPage = (req, res, next) => {
   let email = req.body.email;
-  if (email === "@") {
-    email = "";
+  if(email === '@'){ 
+    email = '';
   }
-  const eventsId = [req.body.eventId];
+  let eventsId = req.body.eventId;
   const paymentDone = req.body.paymentDone;
   let events = [];
-  if (eventsId !== undefined) {
-    for (let eventId of eventsId) {
-      Event.findById(eventId)
-        .then((event) => {
-          let Event = { event };
-          events.push(Event);
-        })
-        .catch((err) => {
-          const error = new Error(err);
-          error.httpStatusCode = 500;
-          return next(error);
-        });
-    }
-  }
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    Event.find()
-      .then((events) => {
-        return res.status(422).render("user/spot-registration", {
-          path: "/spot-registration",
-          pageTitle: "Spot Registration",
+  Event.find()
+    .then((events) => {
+        return res.status(422).render('user/spot-registration', {
+          path: '/spot-registration',
+          pageTitle: 'Spot Registration',
           errorMessage: errors.array()[0].msg,
           events: events,
           oldInput: {
@@ -681,62 +667,85 @@ exports.postSpotRegistrationsPage = (req, res, next) => {
           },
           validationErrors: errors.array(),
           message: undefined,
-          success: undefined,
+          success: undefined
         });
-      })
-      .catch((err) => {
-        const error = new Error(err);
-        error.httpStatusCode = 500;
-        return next(error);
-      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
   }
   else
   {
-    User.find({ email: email })
-    .then((user) => {
-      if (eventsId[0] === undefined) {
-        Event.find().then((events) => {
-          return res.status(422).render("user/spot-registration", {
-            path: "/spot-registration",
-            pageTitle: "Spot Registration",
-            errorMessage: "Please select the events to register",
-            oldInput: {
-              email: email,
-            },
-            events: events,
-            validationErrors: [],
-            message: undefined,
-            success: undefined,
-          });
-        });
-      } else {
-        User.find({ email: email })
-          .then((user) => {
-            events.forEach((e) => {
-              Event.find({ _id: e.event._id }).then((event) => {
-                event[0].addTheUser(user[0]);
-              });
-            });
-            const spot = new Spot({
-              user: {
-                email: user[0].email,
-                userId: user[0]._id,
-              },
-              paymentDone: paymentDone,
-              events: events,
-              created_at: Date.now(),
-            });
-            spot.save();
-          })
-          .then(() => {
-            req.flash("success", "Spot Registration Was Successfull!");
-            res.redirect("/spot-registration");
+    if(eventsId !== undefined)
+    {
+      if(eventsId.length === 24)
+      {
+        eventsId = [eventsId]
+      }
+      for(let eventId of eventsId)
+      {
+        Event.findById(eventId)
+          .then((event) => {
+              let Event = {event}
+              events.push(Event)
           })
           .catch((err) => {
             const error = new Error(err);
             error.httpStatusCode = 500;
             return next(error);
           });
+      }
+    }
+    User.find({email: email})
+    .then((user) => {
+      if(eventsId[0] === undefined){
+        Event.find()
+        .then((events) => {
+            return res.status(422).render('user/spot-registration', {
+              path: '/spot-registration',
+              pageTitle: 'Spot Registration',
+              errorMessage: 'Please select the events to register',
+              oldInput: {
+                email: email,
+              },
+              events: events,
+              validationErrors: [],
+              message: undefined,
+              success: undefined
+            });
+        })
+      }
+      else {
+        User.find({email: email})
+        .then((user) => {
+          events.forEach(e => {
+            Event.find({ _id: e.event._id })
+              .then(event => {
+                event[0].addTheUser(user[0]);
+              })
+          })
+          const spot = new Spot({
+            user: {
+              email: user[0].email,
+              userId: user[0]._id,
+            },
+            paymentDone: paymentDone,
+            events: events,
+            created_at : Date.now()
+          });
+          spot.save();
+        })
+        .then(() => {;
+          req.flash('success', 'Spot Registration Was Successfull!')
+          res.redirect('/spot-registration')
+        })
+        .catch((err) => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error);
+        });
       }
     })
     .catch((err) => {
