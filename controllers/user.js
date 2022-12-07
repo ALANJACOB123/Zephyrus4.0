@@ -690,7 +690,9 @@ exports.postSpotRegistrationsPage = (req, res, next) => {
         return next(error);
       });
   }
-  User.find({ email: email })
+  else
+  {
+    User.find({ email: email })
     .then((user) => {
       if (eventsId[0] === undefined) {
         Event.find().then((events) => {
@@ -742,6 +744,7 @@ exports.postSpotRegistrationsPage = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
+  }
 };
 
 exports.getGroupMemberPage = (req, res, next) => {
