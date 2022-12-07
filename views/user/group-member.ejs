@@ -94,6 +94,24 @@
                             value="<%= oldInput.candidate4Phone %>"
                             placeholder="Candidate Phone No.">
                         </div>
+                        <div class="mb-3">
+                            <input 
+                            class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                            type="text" 
+                            name="candidate5Name" 
+                            id="candidate5Name" 
+                            value="<%= oldInput.candidate4Name %>"
+                            placeholder="Candidate Name">
+                        </div>
+                        <div class="mb-3">
+                            <input 
+                            class="form-control <%= validationErrors.find(e => e.param === 'type') ? 'invalid' : '' %>" 
+                            type="number" 
+                            name="candidate5Phone" 
+                            id="candidate5Phone" 
+                            value="<%= oldInput.candidate4Phone %>"
+                            placeholder="Candidate Phone No.">
+                        </div>
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <input type="hidden" name="eventId" value="<%= eventId %>">
                         <div>
