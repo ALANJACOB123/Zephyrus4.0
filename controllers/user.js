@@ -155,7 +155,7 @@ exports.postRegistration = (req, res, next) => {
               });
             } else {
               req.user.addToRegister(event);
-              req.flash("success", "Please go to the Register Page to complete the registration");
+              req.flash("success", "Please go to the Payment Page to complete the registration");
               res.redirect("/events");
             }
           })
