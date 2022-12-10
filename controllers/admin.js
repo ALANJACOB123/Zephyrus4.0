@@ -326,7 +326,6 @@ exports.getRegistrations = async (req, res, next) => {
       const csv = parse(user, opts);
       fs.writeFile('data/excel/registrations.csv', csv, function (err) {
         if (err) throw err;
-        console.log("Write Successfully!");
       });
     } catch(err) {
       const error = new Error(err);
@@ -342,11 +341,13 @@ exports.getRegistrations = async (req, res, next) => {
           .then(user => {
             if(user.registration.users[0] !== undefined ) 
             {
-              const users = user.registration.users[0].userId;
-              const fields = ['Name', 'email', 'Address', 'CollegeName', 'Dept', 'State', 'PhoneNo'];
-              const opts = { fields };
+              let event_users = []
+              user.registration.users.forEach((users) => {
+                event_users.push(users.userId);
+                const fields = ['Name', 'email', 'Address', 'CollegeName', 'Dept', 'State', 'PhoneNo'];
+                const opts = { fields };
               try {
-                const csv = parse(users, opts);
+                const csv = parse(event_users, opts);
                 fs.writeFile(`data/excel/${e.title}.csv`, csv, function (err) {
                   if (err) throw err;
                 });
@@ -354,7 +355,8 @@ exports.getRegistrations = async (req, res, next) => {
                 const error = new Error(err);
                 error.httpStatusCode = 500;
                 return next(error);
-            }
+              }
+              })
             }
           })
       })
