@@ -17,6 +17,7 @@
                         <div class="col-md-8 col-xl-6 text-center mx-auto">
                             <h1 class="fw-bold">Events</h1>
                             <p class="text-muted w-lg-50">List of all the events you can participate and win!.&nbsp;</p>
+                            <p class="text-muted w-lg-50">After adding event to payment,<a href="https://zephyrustechfest.com/register">Click Here</a> to complete the registrations.</p>
                         </div>
                     </div>
                     <% if (events.length > 0) { %>
@@ -39,7 +40,7 @@
                                                 </div>
                                             </div>
                                             <div class="d-flex">
-                                                <a href="/events/<%= event._id %>" class="btn btn-primary" type="button">Details</a>
+                                                <a href="/events/<%= event._id %>" class="btn btn-primary align-self-center" type="button">Details</a>
                                                 <% if (isAuthenticated) { %>
                                                     <%- include('../includes/register.ejs', {event: event}) %>
                                                 <% } %>

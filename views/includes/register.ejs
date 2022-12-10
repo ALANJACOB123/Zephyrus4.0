@@ -1,7 +1,7 @@
 <% if (event.active && event.registrations <= 60 ) { %>
 <form action="/register" method="post">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <button class="btn btn-primary" type="submit" style="margin-left: 14px;">Register</button>
+    <button class="btn btn-primary" type="submit" style="margin-left: 14px;">Add to Payment</button>
     <input type="hidden" name="eventId" value="<%= event._id %>">
 </form>
 <% } %>
