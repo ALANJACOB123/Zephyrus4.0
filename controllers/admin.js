@@ -351,9 +351,23 @@ exports.getRegistrations = async (req, res, next) => {
             if(user.registration.users[0] !== undefined ) 
             {
               let event_users = []
+              let infoUser = {}
               user.registration.users.forEach((users) => {
-                event_users.push(users.userId);
-                const fields = ['Name', 'email', 'Address', 'CollegeName', 'Dept', 'State', 'PhoneNo'];
+                if(users.userId.group[0] !== undefined) {
+                  users.userId.group.forEach((group) => {
+                    infoUser = {
+                      ...users.userId._doc,
+                      ...group.groupMembers
+                    }
+                  })
+                }
+                else{
+                  infoUser = {
+                    ...users.userId._doc,
+                  }
+                }
+                event_users.push(infoUser);
+                const fields = ['Name', 'email', 'Address', 'CollegeName', 'Dept', 'State', 'PhoneNo' , 'candidate1Name', 'candidate1Phone', 'candidate2Name', 'candidate2Phone', 'candidate3Name', 'candidate3Phone', 'candidate4Name', 'candidate4Phone', 'candidate5Name', 'candidate5Phone'];
                 const opts = { fields };
               try {
                 const csv = parse(event_users, opts);
