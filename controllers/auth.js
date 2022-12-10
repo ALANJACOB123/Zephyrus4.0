@@ -57,6 +57,7 @@ exports.postAdminLogin = (req, res, next) => {
       path: "/admin-login",
       pageTitle: "Admin-Login",
       errorMessage: errors.array()[0].msg,
+      emailsent: undefined,
       oldInput: {
         email: email,
         password: password,
@@ -71,6 +72,7 @@ exports.postAdminLogin = (req, res, next) => {
           path: "/admin-login",
           pageTitle: "Admin-Login",
           errorMessage: "Invalid email or password.",
+          emailsent: undefined,
           oldInput: {
             email: email,
             password: password,
@@ -93,6 +95,7 @@ exports.postAdminLogin = (req, res, next) => {
             path: "/admin-login",
             pageTitle: "Admin-Login",
             errorMessage: "Invalid email or password.",
+            emailsent: undefined,
             oldInput: {
               email: email,
               password: password,
@@ -357,6 +360,7 @@ exports.postLogin = (req, res, next) => {
       path: "/login_user",
       pageTitle: "Login",
       errorMessage: errors.array()[0].msg,
+      emailsent: undefined,
       oldInput: {
         email: email,
         password: password,
@@ -371,6 +375,7 @@ exports.postLogin = (req, res, next) => {
           path: "/login_user",
           pageTitle: "Login",
           errorMessage: "Invalid email or password.",
+          emailsent: undefined,
           oldInput: {
             email: email,
             password: password,
@@ -408,6 +413,7 @@ exports.postLogin = (req, res, next) => {
             path: "/login_user",
             pageTitle: "Login",
             errorMessage: "Invalid email or password.",
+            emailsent: undefined,
             oldInput: {
               email: email,
               password: password,
