@@ -316,8 +316,17 @@ exports.postDeleteEvent = (req, res, next) => {
 };
 
 exports.getRegistrations = async (req, res, next) => {
+  let totalRegistrationAmount = 0
   const docCountUser = await User.countDocuments({}).exec();
   const docCountOrder = await Order.countDocuments({}).exec();
+  Order.find()
+    .then((orders) => {
+      orders.forEach((order) => {
+        order.events.forEach((events) => {
+          totalRegistrationAmount = totalRegistrationAmount + events.event.price
+        })
+      })
+    })
   const docCountSpot = await Spot.countDocuments({}).exec();
   User.find().then(user => {
     const fields = ['Name', 'email', 'Address', 'CollegeName', 'Dept', 'State', 'PhoneNo'];
@@ -364,6 +373,7 @@ exports.getRegistrations = async (req, res, next) => {
         totalUsers: docCountUser,
         totalOrders: docCountOrder,
         totalSpot: docCountSpot,
+        totalRegistrationAmount: totalRegistrationAmount,
         events: events,
         pageTitle: "Registrations",
         path: "/admin/registrations",
