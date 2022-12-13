@@ -317,6 +317,7 @@ exports.postDeleteEvent = (req, res, next) => {
 
 exports.getRegistrations = async (req, res, next) => {
   let totalRegistrationAmount = 0
+  let totalSpotAmount = 0
   const docCountUser = await User.countDocuments({}).exec();
   const docCountOrder = await Order.countDocuments({}).exec();
   Order.find()
@@ -328,6 +329,14 @@ exports.getRegistrations = async (req, res, next) => {
       })
     })
   const docCountSpot = await Spot.countDocuments({}).exec();
+  Spot.find()
+    .then((orders) => {
+      orders.forEach((order) => {
+        order.events.forEach((events) => {
+          totalSpotAmount = totalSpotAmount + events.event.price
+        })
+      })
+    })
   User.find().then(user => {
     const fields = ['Name', 'email', 'Address', 'CollegeName', 'Dept', 'State', 'PhoneNo'];
     const opts = { fields };
@@ -388,6 +397,7 @@ exports.getRegistrations = async (req, res, next) => {
         totalOrders: docCountOrder,
         totalSpot: docCountSpot,
         totalRegistrationAmount: totalRegistrationAmount,
+        totalSpotAmount: totalSpotAmount,
         events: events,
         pageTitle: "Registrations",
         path: "/admin/registrations",
