@@ -700,13 +700,13 @@ exports.postSpotRegistrationsPage = (req, res, next) => {
     }
     User.find({email: email})
     .then((user) => {
-      if(eventsId[0] === undefined){
+      if(eventsId[0] === undefined || user == ''){
         Event.find()
-        .then((events) => {
+          .then((events) => {
             return res.status(422).render('user/spot-registration', {
               path: '/spot-registration',
               pageTitle: 'Spot Registration',
-              errorMessage: 'Please select the events to register',
+              errorMessage: 'Invalid E-mail or please select a event to register',
               oldInput: {
                 email: email,
               },
@@ -720,21 +720,23 @@ exports.postSpotRegistrationsPage = (req, res, next) => {
       else {
         User.find({email: email})
         .then((user) => {
-          events.forEach(e => {
-            Event.find({ _id: e.event._id })
-              .then(event => {
-                event[0].registrations = event[0].registrations + 1;
-              })
-          })
-          const spot = new Spot({
-            user: {
-              email: user[0].email,
-            },
-            paymentDone: paymentDone,
-            events: events,
-            created_at : Date.now()
-          });
-          spot.save();
+            events.forEach(e => {
+              Event.find({ _id: e.event._id })
+                .then(event => {
+                  event[0].registrations = event[0].registrations + 1;
+                  event[0].addTheUser(user[0]);
+                })
+            })
+            const spot = new Spot({
+              user: {
+                email: user[0].email,
+                userId: user[0]._id
+              },
+              paymentDone: paymentDone,
+              events: events,
+              created_at : Date.now()
+            });
+            spot.save();
         })
         .then(() => {;
           req.flash('success', 'Spot Registration Was Successfull!')
