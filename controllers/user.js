@@ -730,7 +730,6 @@ exports.postSpotRegistrationsPage = (req, res, next) => {
           const spot = new Spot({
             user: {
               email: user[0].email,
-              userId: user[0]._id,
             },
             paymentDone: paymentDone,
             events: events,
