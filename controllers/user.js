@@ -724,7 +724,6 @@ exports.postSpotRegistrationsPage = (req, res, next) => {
             Event.find({ _id: e.event._id })
               .then(event => {
                 event[0].registrations = event[0].registrations + 1;
-                event[0].addTheUser(user[0]);
               })
           })
           const spot = new Spot({
