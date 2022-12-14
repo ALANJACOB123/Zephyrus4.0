@@ -26,7 +26,7 @@ exports.getNewAdmin = (req, res, next) => {
     message = message[0];
   } else {
     message = null;
-  }
+  } 
   res.render("admin/add-admin", {
     pageTitle: "Add Admin",
     path: "/add-admin",
