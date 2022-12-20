@@ -81,6 +81,8 @@ router.get("/registrations", isAuth.adminAuth, adminController.getRegistrations)
 
 router.get("/registrations/download", isAuth.adminAuth, adminController.getRegistrationsDownload);
 
+router.get("/registrations-pay/download", isAuth.adminAuth, adminController.getRegistrationsPayDownload);
+
 router.get("/registrations/:eventTitle", isAuth.adminAuth, adminController.getRegistrationsDownloadEvent);
 
 router.get('/spot_access_user', isAuth.adminAuth, adminController.getSpotAccess)

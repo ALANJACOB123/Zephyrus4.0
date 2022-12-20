@@ -11,6 +11,7 @@ const User = require("../models/user");
 const Event = require("../models/event");
 const Order = require('../models/order');
 const Spot = require('../models/spot');
+const { Console } = require('console');
 
 
 exports.getAdminPage = (req, res, next) => {
@@ -328,6 +329,31 @@ exports.getRegistrations = async (req, res, next) => {
         })
       })
     })
+  Order.find()
+    .then((orders) => {
+      let allUsers = [];
+      orders.forEach((order) => {
+        order.populate('user.userId')
+        .execPopulate()
+        .then(user => {
+          allUsers.push(user.user.userId)
+        })
+        .then(() => {
+          const fields = ['Name', 'email', 'Address', 'CollegeName', 'Dept', 'State', 'PhoneNo'];
+          const opts = { fields };
+          try {
+            const csv = parse(allUsers, opts);
+            fs.writeFile('data/excel/registrations-with-payments.csv', csv, function (err) {
+              if (err) throw err;
+            });
+          } catch(err) {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+          }
+        })
+      })
+    })
   const docCountSpot = await Spot.countDocuments({}).exec();
   Spot.find()
     .then((orders) => {
@@ -417,6 +443,17 @@ exports.getRegistrationsDownload = (req, res, next) => {
   res.setHeader(
     'Content-Disposition',
     'attachment; filename="registrations.csv"'
+  );
+  file.pipe(res);
+}
+
+exports.getRegistrationsPayDownload = (req, res, next) => {
+  const downloadPath = path.join('data', 'excel', 'registrations-with-payments.csv')
+  const file = fs.createReadStream(downloadPath);
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader(
+    'Content-Disposition',
+    'attachment; filename="registrations-with-payment.csv"'
   );
   file.pipe(res);
 }
