@@ -1,5 +1,6 @@
 <%- include('../includes/head.ejs') %>
 <link rel="stylesheet" href="/css/landing-page.css">
+<link rel="stylesheet" href="/css/chatbot.css">
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css'>
 </head>
     <div class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000" id="carousel-1">
@@ -28,6 +29,7 @@
       </ol>
     </div>
     <%- include('../includes/user-navigation.ejs') %>
+    <%- include('../includes/chatbot.ejs') %>
     <main class="main">
       <header class="bg-dark">
         <div class="container pt-4 pt-xl-5">
@@ -225,4 +227,5 @@
       <i class='bx bx-up-arrow-alt scrollup__icon'></i>
     </a>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/4.0.9/scrollreveal.min.js'></script>
+    <script src="/js/chatbot.js"></script>
 <%- include('../includes/end.ejs') %>
