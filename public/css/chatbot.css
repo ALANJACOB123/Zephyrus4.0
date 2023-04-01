@@ -41,7 +41,7 @@ CHATBOX
 
 /* CONTENT ISOPEN */
 .chatbox--active {
-    transform: translateY(-40px);
+    transform: translateY(-15px);
     z-index: 123456;
     opacity: 1;
 
@@ -98,7 +98,7 @@ CHATBOX
 
 .chatbox__support {
     background: #f9f9f9;
-    height: 450px;
+    height: 425px;
     width: 350px;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
     border-top-left-radius: 20px;
