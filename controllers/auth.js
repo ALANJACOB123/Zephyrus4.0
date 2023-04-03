@@ -432,35 +432,35 @@ exports.postLogin = (req, res, next) => {
     });
 };
 
-// exports.postGoogleLogin = (req, res, next) => {
-//   if (req.user) {
-//     User.findOne({ googleId: req.user.googleId })
-//       .then((user) => {
-//         if (!user) {
-//           return res.status(422).render('auth/login', {
-//             path: '/login-now',
-//             pageTitle: 'Login',
-//             errorMessage: 'Invalid email or password.',
-//           });
-//         }
-//         else {
-//           req.session.isLoggedIn = true;
-//           req.session.user = user;
-//           return req.session.save((err) => {
-//             res.redirect("/user-profile");
-//           });
-//         }
-//       })
-//       .catch(err => {
-//         const error = new Error(err);
-//         error.httpStatusCode = 500;
-//         return next(error);
-//       });
-//   }
-//   else {
-//     res.redirect('/auth/google');
-//   }
-// };
+exports.postGoogleLogin = (req, res, next) => {
+  if (req.user) {
+    User.findOne({ googleId: req.user.googleId })
+      .then((user) => {
+        if (!user) {
+          return res.status(422).render('auth/login', {
+            path: '/login-now',
+            pageTitle: 'Login',
+            errorMessage: 'Invalid email or password.',
+          });
+        }
+        else {
+          req.session.isLoggedIn = true;
+          req.session.user = user;
+          return req.session.save((err) => {
+            res.redirect("/user-profile");
+          });
+        }
+      })
+      .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+      });
+  }
+  else {
+    res.redirect('/auth/google');
+  }
+};
 
 exports.postSignup = (req, res, next) => {
   let email = req.body.email;

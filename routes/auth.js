@@ -214,6 +214,6 @@ router.get(
   }
 );
 
-// router.post("/google-login", authController.postGoogleLogin);
+router.post("/google-login", authController.postGoogleLogin);
 
 module.exports = router;
